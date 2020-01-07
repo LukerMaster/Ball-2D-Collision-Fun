@@ -1,8 +1,10 @@
 #include "Box.h"
 
-Box::Box(int ballAmount, sf::Vector2f boxSize, float wall_stiffness)
+Box::Box(int ballAmount, sf::Vector2f boxSize, float wall_stiffness, float gravity_mult, sf::Color bg_color)
 	: size(boxSize),
-	  wallStiffness(wall_stiffness)
+	wallStiffness(wall_stiffness),
+	bgColor(bg_color),
+	gravity(gravity_mult)
 {
 	srand(time(NULL));
 	_texture.create(size.x, size.y);
@@ -57,19 +59,23 @@ void Box::Update(float dt)
 	}
 }
 
-sf::RenderTexture& Box::GetTexture()
+sf::Sprite Box::GetSprite()
 {
-	_texture.clear(sf::Color::Black);
+	sf::RenderTexture temp;
+	temp.create(size.x, size.y);
 	sf::RectangleShape boxShape;
-	boxShape.setFillColor(sf::Color(100, 140, 160));
+	boxShape.setFillColor(bgColor);
 	boxShape.setSize({size.x, size.y});
-	_texture.draw(boxShape);
+	temp.draw(boxShape);
 	for (int i = 0; i < balls.size(); i++)
 	{
-		_texture.draw(balls[i].GetShape());
+		temp.draw(balls[i].GetShape());
 	}
-	_texture.display();
-	return _texture;
+	temp.display();
+	_texture = temp.getTexture();
+
+	sf::Sprite sprite = sf::Sprite(_texture);
+	return sprite;
 }
 
 float Box::GetSDistance(sf::Vector2f point1, sf::Vector2f point2) // Never returns 0.

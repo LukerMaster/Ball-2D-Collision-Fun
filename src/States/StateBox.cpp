@@ -18,7 +18,7 @@ void StateBox::Update(float dt)
 	if (_vars.inputs.down)  _box.AddWoosh({0, _vars.options.wooshPower});
 
 	_box.Update(dt * 0.01f);
-	_vars.window.draw(sf::Sprite(_box.GetTexture().getTexture()));
+	_vars.window.draw(_box.GetSprite());
 
 	if (_vars.frame % 15)
 		_fps.setString(std::to_string(1000000 / _vars.dt));

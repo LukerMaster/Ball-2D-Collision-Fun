@@ -14,16 +14,18 @@
 class Box
 {
 private:
-	sf::RenderTexture _texture;
+	sf::Texture _texture;
 public:
-	Box(int ballAmount, sf::Vector2f boxSize, float wall_stiffness = 0.9f);
+	Box(int ballAmount, sf::Vector2f boxSize, float wall_stiffness = 0.9f, float gravity_mult = 9.81f, sf::Color bg_color = {40, 40, 40});
 
 	std::vector<Ball> balls;
 	sf::Vector2f size;
 	float wallStiffness; // If ball bounces off the wall, its speed is multiplied by this.
+	float gravity;
+	sf::Color bgColor;
 
 	void Update(float dt);
-	sf::RenderTexture& GetTexture();
+	sf::Sprite GetSprite();
 
 	float GetDistance(sf::Vector2f point1, sf::Vector2f point2);
 	float GetSDistance(sf::Vector2f point1, sf::Vector2f point2); // If calulates 0, returns 1.
