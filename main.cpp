@@ -4,7 +4,7 @@
 #include "src/States/StateMenu.h"
 
 #include <iostream>
-
+//v0.0.2
 int main()
 {
 	AppInstance instance;
