@@ -11,3 +11,8 @@ void ButtonFunctions::exit(EnvVariables& vars)
 	vars.options.isOpen = false;
 	vars.window.close();
 }
+
+void ButtonFunctions::resetBox(EnvVariables& vars)
+{
+	vars.options.resetBox = true;
+}

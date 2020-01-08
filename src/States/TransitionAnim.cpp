@@ -7,7 +7,7 @@ TransitionAnim::TransitionAnim(EnvVariables& vars)
 {
 }
 
-sf::Sprite TransitionAnim::Play(sf::Vector2i size, float speed) // Percentage from 0.0f to 1.0f
+void TransitionAnim::Play(sf::Vector2i size, float speed) // Percentage from 0.0f to 1.0f
 {
 	percentage > 1.0f ? percentage = 1.0f : percentage;
 	percentage < 0.0f ? percentage = 0.0f : percentage;
@@ -27,9 +27,6 @@ sf::Sprite TransitionAnim::Play(sf::Vector2i size, float speed) // Percentage fr
 		}
 		_box = Box(ballVec, { size.x * 1.0f, size.y * 1.0f }, -1.0f, 3.0f * speed, sf::Color(0, 0, 0, 0));
 	}
-	sf::RenderTexture temp;
-	temp.create(size.x, size.y);
-	temp.clear(sf::Color::Transparent);
 	sf::RectangleShape boxes[2];
 
 	boxes[0].setFillColor({ 230, 230, 230 });
@@ -77,11 +74,9 @@ sf::Sprite TransitionAnim::Play(sf::Vector2i size, float speed) // Percentage fr
 		_box.balls[0].SetVelocity({ 0, -spd * 2 * speed });
 	}
 
-	temp.draw(boxes[0]);
-	temp.draw(boxes[1]);
-	temp.draw(_box.GetSprite());
-	temp.display();
-	_texture = temp.getTexture();
+	_vars.window.draw(boxes[0]);
+	_vars.window.draw(boxes[1]);
+	_box.Draw(_vars);
 
 	percentage += 0.001f * speed;
 	if (percentage >= 1.0f)
@@ -89,6 +84,5 @@ sf::Sprite TransitionAnim::Play(sf::Vector2i size, float speed) // Percentage fr
 		percentage = 0.0f;
 		_vars.transition = false;
 	}
-	return sf::Sprite(_texture);
 
 }

@@ -1,30 +1,32 @@
 #include "Button.h"
 
-Button::Button(EnvVariables& vars, std::string text, std::string description, sf::Vector2f pos, sf::Vector2f size)
-	:position(pos),
-	_vars(vars)
+Button::Button(EnvVariables& vars, void (*function)(EnvVariables& vars), std::string text, std::string description, sf::Vector2f pos, sf::Vector2f size)
+	:_vars(vars)
 {
 	hitBox.setSize(size);
+	hitBox.setPosition(pos);
+
 	label.setString(text);
+	label.setPosition(pos);
 	label.setFont(_vars.assets.font);
-	label.setCharacterSize(30);
-	label.setPosition(5, 0);
+	label.setCharacterSize(size.y * 0.8f);
+
 	desc.setString(description);
+
 	SetColors();
 	hitBox.setFillColor(baseColor);
-	func = ButtonFunctions::exit;
+
+	func = function;
 	_prevMousePressed = false;
 	_prevHovered = false;
+
 	_hoverSound.setBuffer(_vars.assets.menuSelect);
 	_pressSound.setBuffer(_vars.assets.menuClick);
 }
 
-void Button::Update(float dt, sf::Vector2f offset)
+void Button::Update(float dt)
 {
-	sf::RectangleShape temp = hitBox;
-	temp.move(position + offset);
-	
-	if (Addons::point_in_rect(_vars.inputs.mouse_pos, temp))
+	if (Addons::point_in_rect(_vars.inputs.mouse_pos, hitBox))
 	{
 		if (!_prevHovered)
 			_hoverSound.play();
@@ -45,7 +47,7 @@ void Button::Update(float dt, sf::Vector2f offset)
 		label.setFillColor(Addons::shift_color(label.getFillColor(), baseTextColor, 6));
 		_prevHovered = false;
 	}
-	Addons::point_in_rect(_vars.inputs.mouse_pos, temp) ? _prevHovered = true : _prevHovered = false;
+	Addons::point_in_rect(_vars.inputs.mouse_pos, hitBox) ? _prevHovered = true : _prevHovered = false;
 	sf::Mouse::isButtonPressed(sf::Mouse::Left) ? _prevMousePressed = true : _prevMousePressed = false;
 }
 
@@ -57,15 +59,13 @@ void Button::SetColors(sf::Color hlButton, sf::Color hlText, sf::Color button, s
 	hlTextColor = hlText;
 }
 
-sf::Sprite Button::GetSprite()
+void Button::SetFunction(void(*function)(EnvVariables&))
 {
-	sf::RenderTexture renTex;
-	renTex.create(hitBox.getSize().x, hitBox.getSize().y);
-	renTex.draw(hitBox);
-	renTex.draw(label);
-	renTex.display();
-	_drawTexture = renTex.getTexture();
-	sf::Sprite btSprite = sf::Sprite(_drawTexture);
-	btSprite.move(position);
-	return btSprite;
+	func = function;
+}
+
+void Button::Draw()
+{
+	_vars.window.draw(hitBox);
+	_vars.window.draw(label);
 }

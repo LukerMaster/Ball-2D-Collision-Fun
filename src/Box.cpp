@@ -15,7 +15,6 @@ Box::Box(std::vector<Ball> ballVec, sf::Vector2f boxSize, float wall_stiffness, 
 	_texture.create(size.x, size.y);
 }
 
-
 void Box::Update(float dt)
 {
 	std::vector<std::pair<Ball*, Ball*>> collided;
@@ -47,23 +46,16 @@ void Box::Update(float dt)
 	}
 }
 
-sf::Sprite Box::GetSprite()
+void Box::Draw(EnvVariables& vars)
 {
-	sf::RenderTexture temp;
-	temp.create(size.x, size.y);
 	sf::RectangleShape boxShape;
 	boxShape.setFillColor(bgColor);
 	boxShape.setSize({size.x, size.y});
-	temp.draw(boxShape);
+	vars.window.draw(boxShape);
 	for (int i = 0; i < balls.size(); i++)
 	{
-		temp.draw(balls[i].GetShape());
+		vars.window.draw(balls[i].GetShape());
 	}
-	temp.display();
-	_texture = temp.getTexture();
-
-	sf::Sprite sprite = sf::Sprite(_texture);
-	return sprite;
 }
 
 float Box::GetSDistance(sf::Vector2f point1, sf::Vector2f point2) // Never returns 0.
@@ -192,7 +184,7 @@ void Box::DynamicCollision(Ball& b1, Ball& b2)
 
 void Box::PullByGravity(Ball& b1)
 {
-	b1.AddForce({ 0, gravity * b1.GetMass() * 0.00001f });
+	b1.AddForce({ 0, gravity * b1.GetMass() * 0.000001f });
 }
 
 void Box::AddWoosh(sf::Vector2f direction)

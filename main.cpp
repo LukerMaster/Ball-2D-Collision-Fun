@@ -19,10 +19,15 @@ int main()
 	instance.states.push_back(&stateBox);
 	instance.vars().assets.font.loadFromFile("assets/roboto.ttf");
 	sf::Clock time;
-
+	
+	sf::Text debug_fps;
+	debug_fps.setCharacterSize(15);
+	debug_fps.setFont(instance.vars().assets.font);
+	debug_fps.setPosition(520, 580);
+	debug_fps.setOutlineColor({ 30, 30, 30 });
+	debug_fps.setOutlineThickness(1);
+	
 	TransitionAnim transition(instance.vars());
-
-	instance.vars().options.wooshPower = 2.0f;
 
 	sf::Event eventHandler;
 
@@ -31,12 +36,20 @@ int main()
 		instance.vars().window.clear(sf::Color::Black);
 
 		// Main state loop
+		//
+		//
+		//
 		instance.states[(int)instance.vars().curState]->Update(instance.vars().dt);
 		if (instance.vars().transition)
 		{
-			instance.vars().window.draw(transition.Play({ 600, 600 }, 4.0f));
+			transition.Play({ 600, 600 }, 4.0f);
 		}
+		instance.vars().window.draw(debug_fps);
 		instance.vars().window.display();
+		//
+		//
+		//
+
 
 		// Events
 		instance.vars().window.pollEvent(eventHandler);
@@ -53,12 +66,16 @@ int main()
 		// Time measurement
 		instance.vars().dt = time.getElapsedTime().asMicroseconds();
 
-		//std::cout << dt << std::endl;
+
 
 		if (instance.vars().dt < 4000)
 		{
 			sf::sleep(sf::microseconds(4000 - (double)instance.vars().dt));
 		}
+
+		if (instance.vars().frame % 20 == 0)
+			debug_fps.setString( std::to_string(1000000 / time.getElapsedTime().asMicroseconds()) + " FPS");
+
 		instance.vars().real_dt = time.getElapsedTime().asMicroseconds();
 		instance.vars().dt = time.getElapsedTime().asMicroseconds();
 		if (instance.vars().dt > 4000) instance.vars().dt = 4000;

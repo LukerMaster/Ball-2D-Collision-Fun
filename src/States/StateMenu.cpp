@@ -14,15 +14,14 @@ StateMenu::StateMenu(EnvVariables& vars)
 			sf::Color(rand() % 30 + 50, rand() % 30 + 50, rand() % 30 + 50),
 			sf::Vector2f(rand()%10 * 0.00001f, rand() % 10 * 0.00001f)));
 	}
-
 	// Start button
-	_buttons.push_back(Button(_vars, "Open the box.", "Opens the box with balls and let's you start playing."));
-	_buttons[0].func = ButtonFunctions::runBox;
-
+	_buttons.push_back(Button(_vars, ButtonFunctions::runBox, "Open the box.", "Opens the box with balls and let's you start playing.", { 10, 10 }));
 	// Exit button
-	_buttons.push_back(Button(_vars, "Exit.", "Quits this epic project.", {10, 550}));
+	_buttons.push_back(Button(_vars, ButtonFunctions::exit, "Exit.", "Quits this epic project.", {10, 550}));
 	_buttons[1].SetColors({ 0, 255, 50 });
-	_buttons[1].func = ButtonFunctions::exit;
+	// Reset button
+	_buttons.push_back(Button(_vars, ButtonFunctions::resetBox, "Reset box.", "Resets the contents of the box.", { 10, 60 }));
+	_buttons[2].SetColors({ 0, 50, 255 });
 
 	// Main text in menu.
 	_name.setString("Balls2D");
@@ -41,10 +40,10 @@ StateMenu::StateMenu(EnvVariables& vars)
 void StateMenu::Update(float dt)
 {
 	_animation.Update(dt);
-	_vars.window.draw(_animation.GetSprite());
+	_animation.Draw(_vars);
 	for (int i = 0; i < _buttons.size(); i++)
 	{
-		_vars.window.draw(_buttons[i].GetSprite());
+		_buttons[i].Draw();
 		_buttons[i].Update(dt);
 	}
 	_vars.window.draw(_name);

@@ -6,7 +6,7 @@ EnvVariables::EnvVariables()
 {
 	options.coloredHits = false;
 	options.isOpen = true;
-	options.wooshPower = 0.0002f;
+	options.wooshPower = 0.02f;
 
 	inputs.down = false;
 	inputs.up = false;
@@ -21,6 +21,7 @@ EnvVariables::EnvVariables()
 	assets.menuClick.loadFromFile("assets/mnst.mlg");
 
 	curState = eStates::stMenu;
+
 }
 
 void Inputs::checkKeyPresses()

@@ -15,5 +15,6 @@ class StateBox :
 public:
 	StateBox(EnvVariables& vars);
 	void Update(float dt);
+	void CreateBox();
 };
 

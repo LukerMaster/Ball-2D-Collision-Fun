@@ -1,36 +1,28 @@
 #include "StateBox.h"
 
 StateBox::StateBox(EnvVariables& vars)
-	:State(vars)
+	:State(vars),
+	_menu(vars, { Button(vars, ButtonFunctions::exit, "Add Ball", "No description"),
+		Button(vars,ButtonFunctions::exit, "Add Balls", "No description"),
+		Button(vars,ButtonFunctions::exit, "Remove Balls", "No description"),
+		Button(vars,ButtonFunctions::exit, "Set Gravity", "No description"),
+		Button(vars,ButtonFunctions::exit, "Set Gravity", "No description"),
+		Button(vars,ButtonFunctions::exit, "Set Gravity", "No description"),
+		Button(vars,ButtonFunctions::exit, "Set Gravity", "No description") },
+		{ 0, 0, 0, 140 }, sf::Text("Mode:", _vars.assets.font, 30)
+		)
 {
-	std::vector<Button> menuButtons;
-	menuButtons.push_back(Button(vars, "Add Ball", "No description"));
-	menuButtons.push_back(Button(vars, "Add Balls", "No description"));
-	menuButtons.push_back(Button(vars, "Remove Balls", "No description"));
-	menuButtons.push_back(Button(vars, "Set Gravity", "No description"));
-	sf::Text menuLabel;
-	menuLabel.setString("Mode:");
-	menuLabel.setCharacterSize(30);
-	menuLabel.setFont(_vars.assets.font);
-
-	_menu = ContextMenu(menuButtons, { 0, 0, 0, 140 }, menuLabel);
-
 	_prevClicked = false;
-	_fps.setFont(_vars.assets.font);
-	_fps.setPosition(10, 10);
-	_fps.setOutlineColor({ 0, 0, 0 });
-	_fps.setOutlineThickness(2);
-	_fps.setCharacterSize(20);
-	std::vector<Ball> ballVec;
-	for (int i = 0; i < 10; i++)
-	{
-		ballVec.push_back(Ball(i, sf::Vector2f(rand()%600, rand()%600) , 5.0f, 8000.0f, { 220, 250, 220 }, { 0.0003, 0.0004 }));
-	}
-	_box = Box(ballVec, { 600, 600 }, 0.5f, 9.81f);
+	CreateBox();
 }
 
 void StateBox::Update(float dt)
 {
+	if (_vars.options.resetBox)
+	{
+		CreateBox();
+		_vars.options.resetBox = false;
+	}
 	if (_vars.inputs.left)  _box.AddWoosh({ -_vars.options.wooshPower, 0 });
 	if (_vars.inputs.right) _box.AddWoosh({ _vars.options.wooshPower,  0 });
 	if (_vars.inputs.up)    _box.AddWoosh({ 0, -_vars.options.wooshPower });
@@ -42,22 +34,33 @@ void StateBox::Update(float dt)
 	}
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && _prevClicked == false)
 	{
-		_box.AddBall(Ball(0, sf::Vector2f(sf::Mouse::getPosition(_vars.window))));
-		_menu.Open(1.0f, sf::Mouse::getPosition(_vars.window));
+		_box.AddBall(Ball(0, sf::Vector2f(sf::Mouse::getPosition(_vars.window)), 15.0f, 4500.0f, Addons::hsv(rand() % 361, 1.0f, 1.0f)));
+		//if (_menu.isOpen() && !_menu.isHovered())
+			//_menu.Hide();
+		//if (!_menu.isOpen())
+			//_menu.Open(1.0f, sf::Mouse::getPosition(_vars.window));
 	}
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
 	{
-		_box.AddBall(Ball(0, sf::Vector2f(sf::Mouse::getPosition(_vars.window))));
+		_box.AddBall(Ball(0, sf::Vector2f(sf::Mouse::getPosition(_vars.window)), 5.0f, 1000.0f, Addons::hsv(rand()%361, 1.0f, 1.0f)));
 	}
 	_box.Update(dt * 0.1f);
-	_menu.Update(dt * 0.01f);
-	_vars.window.draw(_box.GetSprite());
+	_box.Draw(_vars);
 
-	if (_vars.frame % 15)
-		_fps.setString(std::to_string(1000000 / _vars.real_dt));
-
-	_vars.window.draw(_fps);
 	if (_menu.isOpen())
-		_vars.window.draw(_menu.Show());
+	{
+		//_menu.Update(dt);
+		//_vars.window.draw(_menu.GetSprite());
+	}
 	sf::Mouse::isButtonPressed(sf::Mouse::Left) ? _prevClicked = true : _prevClicked = false;
+}
+
+void StateBox::CreateBox()
+{
+	std::vector<Ball> ballVec;
+	for (int i = 0; i < 20; i++)
+	{
+		ballVec.push_back(Ball(i, sf::Vector2f(rand() % 600, rand() % 200), 5.0f, 1000.0f, { 220, 255, 220 }, { 0.00003, 0.00004 }));
+	}
+	_box = Box(ballVec, { 600, 600 }, 0.5f, 9.81f);
 }

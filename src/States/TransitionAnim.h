@@ -14,6 +14,6 @@ class TransitionAnim
 	float percentage;
 public:
 	TransitionAnim(EnvVariables& vars);
-	sf::Sprite Play(sf::Vector2i size, float speed = 1.0f);
+	void Play(sf::Vector2i size, float speed = 1.0f);
 };
 

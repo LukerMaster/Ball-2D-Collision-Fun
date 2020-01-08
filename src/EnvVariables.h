@@ -10,12 +10,14 @@ struct Assets
 	sf::SoundBuffer menuClick;
 };
 
-struct Options
+struct Options // Program-specific
 {
 	bool isOpen; // Is the game open. 0 means exit.
 
 	bool coloredHits; // Are balls colored red on collision.
 	float wooshPower; // How powerful wooshes are. See Box::AddWoosh()
+
+	bool resetBox;
 };
 
 struct Inputs
@@ -34,7 +36,7 @@ public:
 };
 
 
-struct EnvVariables
+struct EnvVariables 
 {
 	unsigned short frame; // For doing stuff periodically. for example if (frame % 3) ... .
 	float dt;
@@ -48,5 +50,6 @@ struct EnvVariables
 	bool transition;
 public:
 	EnvVariables();
+	EnvVariables(EnvVariables& other);
 };
 
