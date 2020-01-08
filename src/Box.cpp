@@ -1,34 +1,18 @@
 #include "Box.h"
 
-Box::Box(int ballAmount, sf::Vector2f boxSize, float wall_stiffness, float gravity_mult, sf::Color bg_color)
+Box::Box()
+{
+}
+
+Box::Box(std::vector<Ball> ballVec, sf::Vector2f boxSize, float wall_stiffness, float gravity_mult, sf::Color bg_color)
 	: size(boxSize),
 	wallStiffness(wall_stiffness),
 	bgColor(bg_color),
-	gravity(gravity_mult)
+	gravity(gravity_mult),
+	balls(ballVec)
 {
 	srand(time(NULL));
 	_texture.create(size.x, size.y);
-
-	if (ballAmount == -1)
-	{
-		balls.push_back(Ball(0, { 50, 100 }, 50, Wood));
-		balls.push_back(Ball(0, { 150, 100 }, 50, Wood));
-		balls.push_back(Ball(0, { 250, 100 }, 50, Wood));
-		balls[0].AddForce({ 8, 0 });
-	}
-	else
-	{
-		for (int i = 0; i < ballAmount; i++)
-		{
-			float rx = (rand() % 11) - 5;
-			float ry = (rand() % 11) - 5;
-
-			float sx = (((float)(i % 40)) * 0.025f * size.x) + (0.0125f * size.x);
-			float sy = ((i / 40) * 0.025f * size.y) + (0.0125f * size.y);
-			balls.push_back(Ball(i, { sx , sy },5 , (eMaterial)(2 + rand() % 2)));
-			balls[i].AddForce({ rx, ry });
-		}
-	}
 }
 
 
@@ -37,10 +21,10 @@ void Box::Update(float dt)
 	std::vector<std::pair<Ball*, Ball*>> collided;
 	for (int i = 0; i < balls.size(); i++)
 	{
-		balls[i].Update(dt);
-		ContainInBox(balls[i]);
+		if (wallStiffness != -1.0f)
+			ContainInBox(balls[i]);
 		PullByGravity(balls[i]);
-		for (int j = 0; j < balls.size(); j++)
+		for (int j = i; j < balls.size(); j++)
 		{
 			if (i != j)
 			{
@@ -56,6 +40,10 @@ void Box::Update(float dt)
 	for (auto pair : collided)
 	{
 		DynamicCollision(*pair.first, *pair.second);
+	}
+	for (int i = 0; i < balls.size(); i++)
+	{
+		balls[i].Update(dt);
 	}
 }
 
@@ -80,7 +68,7 @@ sf::Sprite Box::GetSprite()
 
 float Box::GetSDistance(sf::Vector2f point1, sf::Vector2f point2) // Never returns 0.
 {
-	float dist = sqrt((point1.x - point2.x) * (point1.x - point2.x) + (point1.y - point2.y) * (point1.y - point2.y));
+	float dist = sqrt(((point1.x - point2.x) * (point1.x - point2.x)) + ((point1.y - point2.y) * (point1.y - point2.y)));
 	if (dist == 0)
 	{
 		//std::cout << "Warn: Zero distance between objects detected, returned 1.\n";
@@ -162,39 +150,49 @@ int Box::GetBallByPos(sf::Vector2i pos)
 void Box::StaticCollision(Ball& b1, Ball& b2)
 {
 	float distance = GetSDistance(b2.GetPosition(), b1.GetPosition());
+	
 	sf::Vector2f vector = GetVector(b2.GetPosition(), b1.GetPosition());
+	
+	float overlap = (distance - b1.GetRadius() - b2.GetRadius());
 
-	float overlap = 0.5f * (distance - b1.GetRadius() - b2.GetRadius());
-	b1.move((-overlap * vector) / distance);
-	b2.move((overlap * vector) / distance);
+	b1.move((-overlap * (b2.GetMass() / (b1.GetMass() + b2.GetMass())) * vector) / distance);
+	b2.move((overlap * (b1.GetMass() / (b1.GetMass() + b2.GetMass())) * vector) / distance);
+	
+	
 	//b1.SetColor({ 0, 0, 255 });
 	//b2.SetColor({ 0, 0, 255 });
 }
 
 void Box::DynamicCollision(Ball& b1, Ball& b2)
 {
-	float distance = GetSDistance(b2.GetPosition(), b1.GetPosition());
-	sf::Vector2f normal = GetVector(b2.GetPosition(), b1.GetPosition()) / distance;
-	sf::Vector2f tangental = { -normal.y, normal.x };
+	if (b1.GetMass() > b2.GetMass())
+	{
+		DynamicCollision(b2, b1);
+	}
+	else
+	{
+		float distance = GetSDistance(b2.GetPosition(), b1.GetPosition());
+		sf::Vector2f normal = GetVector(b1.GetPosition(), b2.GetPosition()) / distance;
+		sf::Vector2f tangental = { -normal.y, normal.x };
 
-	//Dynamic collision
-	float dPr1tan = Addons::dot_product(b1.GetVelocity(), tangental);
-	float dPr2tan = Addons::dot_product(b2.GetVelocity(), tangental);
+		//Dynamic collision
 
-	float dPr1nor = Addons::dot_product(b1.GetVelocity(), normal);
-	float dPr2nor = Addons::dot_product(b2.GetVelocity(), normal);
+		float dPr1tan = Addons::dot_product(b1.GetVelocity(), tangental);
+		float dPr2tan = Addons::dot_product(b2.GetVelocity(), tangental);
 
-	float momentum1 = (dPr1nor * (b1.GetMass() - b2.GetMass()) + 2.0f * b2.GetMass() * dPr2nor) / (b1.GetMass() + b2.GetMass());
-	float momentum2 = (dPr2nor * (b2.GetMass() - b1.GetMass()) + 2.0f * b1.GetMass() * dPr1nor) / (b1.GetMass() + b2.GetMass());
-	b1.SetVelocity((tangental * dPr1tan) + (normal * momentum1));
-	b2.SetVelocity((tangental * dPr2tan) + (normal * momentum2));
-	//b1.SetColor(sf::Color( 255, b1.GetBaseColor().g, b1.GetBaseColor().b ));
-	//b2.SetColor(sf::Color( 255, b2.GetBaseColor().g, b2.GetBaseColor().b ));
+		float dPr1nor = Addons::dot_product(b1.GetVelocity(), normal);
+		float dPr2nor = Addons::dot_product(b2.GetVelocity(), normal);
+
+		float momentum1 = (dPr1nor * (b1.GetMass() - b2.GetMass()) + 2.0f * b2.GetMass() * dPr2nor) / (b1.GetMass() + b2.GetMass());
+		float momentum2 = (dPr2nor * (b2.GetMass() - b1.GetMass()) + 2.0f * b1.GetMass() * dPr1nor) / (b1.GetMass() + b2.GetMass());
+		b1.SetVelocity((tangental * dPr1tan) + (normal * momentum1));
+		b2.SetVelocity((tangental * dPr2tan) + (normal * momentum2));
+	}
 }
 
 void Box::PullByGravity(Ball& b1)
 {
-	b1.AddForce({ 0, 9.81f * b1.GetMass() * 0.00001f });
+	b1.AddForce({ 0, gravity * b1.GetMass() * 0.00001f });
 }
 
 void Box::AddWoosh(sf::Vector2f direction)

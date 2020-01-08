@@ -151,6 +151,7 @@
     <ClCompile Include="src\States\State.cpp" />
     <ClCompile Include="src\States\StateBox.cpp" />
     <ClCompile Include="src\States\StateMenu.cpp" />
+    <ClCompile Include="src\States\TransitionAnim.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Addons.h" />
@@ -164,6 +165,7 @@
     <ClInclude Include="src\States\State.h" />
     <ClInclude Include="src\States\StateBox.h" />
     <ClInclude Include="src\States\StateMenu.h" />
+    <ClInclude Include="src\States\TransitionAnim.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

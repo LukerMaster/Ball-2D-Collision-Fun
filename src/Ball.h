@@ -3,15 +3,6 @@
 
 #include <iostream>
 
-enum eMaterial
-{
-	Paper, // Mass x0.01
-	Plastic, // Mass x0.1
-	Wood, // Mass x1
-	Stone, // Mass x10
-	Lead // Mass x100
-};
-
 class Ball
 {
 private:
@@ -24,14 +15,13 @@ private:
 	sf::CircleShape _shape;
 	sf::Color _baseColor; // If ball changes color, update method brings it back to this.
 
-	eMaterial _material;
-
-	int _id; // Unused
 public:
-	Ball(int id, sf::Vector2f position = {10, 10}, float radius = 5, eMaterial mat = Wood, float massMult = 1000); // Materials: "wood", "stone", "paper"
+
+	Ball(int id, sf::Vector2f position = { 10, 10 }, float radius = 5, float mass = 1000, sf::Color = { 200, 200, 200 }, sf::Vector2f starting_vel = {0, 0}); // Materials: "wood", "stone", "paper"
 	float GetRadius();
 	float GetMass();
 
+	int id; // Unused
 	const sf::Vector2f& GetForce();
 	const sf::Vector2f& GetPosition();
 	const sf::Vector2f& GetVelocity();

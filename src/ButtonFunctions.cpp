@@ -2,7 +2,8 @@
 
 void ButtonFunctions::runBox(EnvVariables& vars)
 {
-	vars.curState = eStates::stBox;
+	vars.nextState = eStates::stBox;
+	vars.transition = true;
 }
 
 void ButtonFunctions::exit(EnvVariables& vars)

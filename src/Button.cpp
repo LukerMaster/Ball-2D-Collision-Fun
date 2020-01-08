@@ -13,33 +13,40 @@ Button::Button(EnvVariables& vars, std::string text, std::string description, sf
 	hitBox.setFillColor(baseColor);
 	SetColors();
 	func = ButtonFunctions::exit;
-	_mousePressed = false;
+	_prevMousePressed = false;
+	_prevHovered = false;
+	_hoverSound.setBuffer(_vars.assets.menuSelect);
+	_pressSound.setBuffer(_vars.assets.menuClick);
 }
 
 void Button::Update(sf::Vector2i cursor_pos)
 {
 	sf::RectangleShape temp = hitBox;
 	temp.move(position);
-	if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
-		_mousePressed = true;
+	
+	if (Addons::point_in_rect(cursor_pos, temp))
+	{
+		if (!_prevHovered)
+			_hoverSound.play();
+		if (!sf::Mouse::isButtonPressed(sf::Mouse::Left) && _prevMousePressed)
+		{
+			_pressSound.play();
+			(*func)(_vars);
+		}
+			
+		hitBox.setFillColor(Addons::shift_color(hitBox.getFillColor(), hlColor, 9));
+		label.setFillColor(Addons::shift_color(label.getFillColor(), hlTextColor, 4));
+		
+		_prevHovered = true;
+	}
 	else
 	{
-		if (Addons::point_in_rect(cursor_pos, temp))
-		{
-			hitBox.setFillColor(Addons::shift_color(hitBox.getFillColor(), hlColor, 2));
-			label.setFillColor(Addons::shift_color(label.getFillColor(), hlTextColor, 4));
-			if (!sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && _mousePressed)
-				(*func)(_vars);
-		}
-		else
-		{
-			hitBox.setFillColor(Addons::shift_color(hitBox.getFillColor(), baseColor, 2));
-			label.setFillColor(Addons::shift_color(label.getFillColor(), baseTextColor, 4));
-			hitBox.setFillColor(baseColor);
-		}
-		_mousePressed = false;
+		hitBox.setFillColor(Addons::shift_color(hitBox.getFillColor(), baseColor, 3));
+		label.setFillColor(Addons::shift_color(label.getFillColor(), baseTextColor, 6));
+		_prevHovered = false;
 	}
-	
+	Addons::point_in_rect(cursor_pos, temp) ? _prevHovered = true : _prevHovered = false;
+	sf::Mouse::isButtonPressed(sf::Mouse::Left) ? _prevMousePressed = true : _prevMousePressed = false;
 }
 
 void Button::SetColors(sf::Color hlButton, sf::Color hlText, sf::Color button, sf::Color text) // 

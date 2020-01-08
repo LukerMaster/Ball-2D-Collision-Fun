@@ -6,7 +6,7 @@ EnvVariables::EnvVariables()
 {
 	options.coloredHits = false;
 	options.isOpen = true;
-	options.wooshPower = 0.02f;
+	options.wooshPower = 0.0002f;
 
 	inputs.down = false;
 	inputs.up = false;
@@ -15,25 +15,22 @@ EnvVariables::EnvVariables()
 	inputs.ret = false;
 	inputs.esc = false;
 
+	transition = false;
+
+	assets.menuSelect.loadFromFile("assets/mnsl.mlg");
+	assets.menuClick.loadFromFile("assets/mnst.mlg");
+
 	curState = eStates::stMenu;
 }
 
 void Inputs::checkKeyPresses()
 {
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-		right = true;
-	else
-		right = false;
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-		left = true;
-	else
-		left = false;
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-		up = true;
-	else
-		up = false;
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-		down = true;
-	else
-		down = false;
+	sf::Keyboard::isKeyPressed(sf::Keyboard::Right) ? right = true : right = false;
+	sf::Keyboard::isKeyPressed(sf::Keyboard::Left) ? left = true : left = false;
+	sf::Keyboard::isKeyPressed(sf::Keyboard::Up) ? up = true : up = false;
+	sf::Keyboard::isKeyPressed(sf::Keyboard::Down) ? down = true : down = false;
+	sf::Keyboard::isKeyPressed(sf::Keyboard::Return) ? ret = true : ret = false;
+	sf::Keyboard::isKeyPressed(sf::Keyboard::Escape) ? esc = true : esc = false;
+
+
 }

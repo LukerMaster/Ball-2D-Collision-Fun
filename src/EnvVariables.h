@@ -7,6 +7,7 @@ struct Assets
 {
 	sf::Font font;
 	sf::SoundBuffer menuSelect;
+	sf::SoundBuffer menuClick;
 };
 
 struct Options
@@ -23,21 +24,25 @@ struct Inputs
 	bool down;
 	bool left;
 	bool right;
-	bool ret;
+	bool ret; // Return, or Enter.
 	bool esc;
 public:
 	void checkKeyPresses();
 };
 
+
 struct EnvVariables
 {
 	unsigned short frame; // For doing stuff periodically. for example if (frame % 3) ... .
 	float dt;
+	float real_dt; // DO NOT EVER USE FOR ANYTHING EXCEPT DISPLAYING. For pchysics, check float dt;
 	Inputs inputs;
 	Options options;
 	Assets assets;
 	sf::RenderWindow window;
 	eStates curState;
+	eStates nextState;
+	bool transition;
 public:
 	EnvVariables();
 };

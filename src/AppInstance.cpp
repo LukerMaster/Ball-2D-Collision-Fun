@@ -1,8 +1,8 @@
 #include "AppInstance.h"
 
 AppInstance::AppInstance()
+	:_vars()
 {
-
 }
 
 EnvVariables& AppInstance::vars()

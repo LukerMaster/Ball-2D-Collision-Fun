@@ -1,39 +1,19 @@
 #include "Ball.h"
 
-Ball::Ball(int id, sf::Vector2f position, float radius, eMaterial material, float massMult)
+Ball::Ball(int Id, sf::Vector2f position, float radius, float mass, sf::Color custom_color, sf::Vector2f starting_vel)
 	: _pos(position),
-	_mass(massMult),
+	_mass(mass),
 	_radius(radius),
-	_id(id),
-	_material(material)
+	id(Id),
+	_baseColor(custom_color)
 {
-	_vel = { 0, 0 };
+	_vel = { starting_vel.x, starting_vel.y };
 	_acc = { 0, 0 };
-	_shape = sf::CircleShape(_radius, 30);
-	switch (material)
-	{
-	case Paper:
-		_baseColor = sf::Color(240, 240, 240);
-		_mass *= 0.01f;
-		break;
-	case Plastic:
-		_baseColor = sf::Color(255, 255, 200);
-		_mass *= 0.1f;
-		break;
-	case Wood:
-		_baseColor = sf::Color(240, 150, 60);
-		break;
-	case Stone:
-		_baseColor = sf::Color(120, 120, 120);
-		_mass *= 10.0f;
-		break;
-	case Lead:
-		_baseColor = sf::Color(50, 50, 100);
-		_mass *= 100.0f;
-		break;
-	default:
-		break;
-	}
+	if (_radius > 150)
+		_shape = sf::CircleShape(_radius, 50);
+	else
+		_shape = sf::CircleShape(_radius, 30);
+
 	_shape.setFillColor(_baseColor);
 	_shape.setOrigin({ radius, radius });
 	_shape.setPosition(_pos.x, _pos.y);

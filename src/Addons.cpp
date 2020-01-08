@@ -21,6 +21,7 @@ sf::Color Addons::shift_color(const sf::Color& current, sf::Color target, int sp
 	if (abs(returned.r - target.r) < speed) returned.r = target.r;
 	if (abs(returned.g - target.g) < speed) returned.g = target.g;
 	if (abs(returned.b - target.b) < speed) returned.b = target.b;
+	if (abs(returned.a - target.a) < speed) returned.a = target.a;
 
 	if (returned.r > target.r) returned.r -= speed;
 	if (returned.r < target.r) returned.r += speed;
@@ -30,6 +31,14 @@ sf::Color Addons::shift_color(const sf::Color& current, sf::Color target, int sp
 
 	if (returned.b > target.b) returned.b -= speed;
 	if (returned.b < target.b) returned.b += speed;
+
+	if (returned.a > target.a) returned.a -= speed;
+	if (returned.a < target.a) returned.a += speed;
 	return returned;
+}
+
+float Addons::reverse_lerp(float start, float end, float value)
+{
+	return -(value - start) / (start - end);
 }
 

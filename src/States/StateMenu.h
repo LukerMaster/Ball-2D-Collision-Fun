@@ -3,6 +3,7 @@
 #include "../Box.h"
 #include "../Button.h"
 #include "../ButtonFunctions.h"
+#include "TransitionAnim.h"
 
 class StateMenu :
 	public State
