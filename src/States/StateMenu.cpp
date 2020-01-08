@@ -30,6 +30,10 @@ StateMenu::StateMenu(EnvVariables& vars)
 	_name.setPosition(300, 20);
 	_name.setFont(_vars.assets.font);
 
+	_author.setString("by Lukasz Lis");
+	_author.setCharacterSize(30);
+	_author.setPosition(400, 550);
+	_author.setFont(_vars.assets.font);
 	// Create animation
 	_animation = Box(ballVec, { 600, 600 }, 1.0f, 0.0f, { 30, 30, 30 });
 }
@@ -41,7 +45,8 @@ void StateMenu::Update(float dt)
 	for (int i = 0; i < _buttons.size(); i++)
 	{
 		_vars.window.draw(_buttons[i].GetSprite());
-		_buttons[i].Update(sf::Mouse::getPosition(_vars.window));
+		_buttons[i].Update(dt);
 	}
 	_vars.window.draw(_name);
+	_vars.window.draw(_author);
 }

@@ -10,8 +10,8 @@ Button::Button(EnvVariables& vars, std::string text, std::string description, sf
 	label.setCharacterSize(30);
 	label.setPosition(5, 0);
 	desc.setString(description);
-	hitBox.setFillColor(baseColor);
 	SetColors();
+	hitBox.setFillColor(baseColor);
 	func = ButtonFunctions::exit;
 	_prevMousePressed = false;
 	_prevHovered = false;
@@ -19,12 +19,12 @@ Button::Button(EnvVariables& vars, std::string text, std::string description, sf
 	_pressSound.setBuffer(_vars.assets.menuClick);
 }
 
-void Button::Update(sf::Vector2i cursor_pos)
+void Button::Update(float dt, sf::Vector2f offset)
 {
 	sf::RectangleShape temp = hitBox;
-	temp.move(position);
+	temp.move(position + offset);
 	
-	if (Addons::point_in_rect(cursor_pos, temp))
+	if (Addons::point_in_rect(_vars.inputs.mouse_pos, temp))
 	{
 		if (!_prevHovered)
 			_hoverSound.play();
@@ -45,7 +45,7 @@ void Button::Update(sf::Vector2i cursor_pos)
 		label.setFillColor(Addons::shift_color(label.getFillColor(), baseTextColor, 6));
 		_prevHovered = false;
 	}
-	Addons::point_in_rect(cursor_pos, temp) ? _prevHovered = true : _prevHovered = false;
+	Addons::point_in_rect(_vars.inputs.mouse_pos, temp) ? _prevHovered = true : _prevHovered = false;
 	sf::Mouse::isButtonPressed(sf::Mouse::Left) ? _prevMousePressed = true : _prevMousePressed = false;
 }
 

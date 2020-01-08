@@ -48,6 +48,7 @@ int main()
 
 		//Key presses
 		instance.vars().inputs.checkKeyPresses();
+		instance.vars().inputs.checkMousePos(instance.vars().window);
 		
 		// Time measurement
 		instance.vars().dt = time.getElapsedTime().asMicroseconds();

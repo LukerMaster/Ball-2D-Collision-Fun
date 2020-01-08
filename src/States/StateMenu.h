@@ -12,6 +12,7 @@ private:
 	Box _animation;
 	std::vector<Button> _buttons;
 	sf::Text _name;
+	sf::Text _author;
 public:
 	StateMenu(EnvVariables& vars);
 	void Update(float dt);

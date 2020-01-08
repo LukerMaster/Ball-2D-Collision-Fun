@@ -202,3 +202,8 @@ void Box::AddWoosh(sf::Vector2f direction)
 		balls[i].AddForce(direction);
 	}
 }
+
+void Box::AddBall(Ball ball)
+{
+	balls.push_back(ball);
+}

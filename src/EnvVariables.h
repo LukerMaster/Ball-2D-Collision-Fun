@@ -26,8 +26,11 @@ struct Inputs
 	bool right;
 	bool ret; // Return, or Enter.
 	bool esc;
+	
+	sf::Vector2i mouse_pos;
 public:
 	void checkKeyPresses();
+	void checkMousePos(sf::Window& win);
 };
 
 

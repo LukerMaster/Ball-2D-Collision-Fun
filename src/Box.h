@@ -42,5 +42,6 @@ public:
 	void PullByGravity(Ball& b1);
 
 	void AddWoosh(sf::Vector2f direction); // Adds some woosh to woosh all the balls.
+	void AddBall(Ball ball);
 };
 

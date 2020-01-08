@@ -34,3 +34,8 @@ void Inputs::checkKeyPresses()
 
 
 }
+
+void Inputs::checkMousePos(sf::Window& win)
+{
+	mouse_pos = sf::Mouse::getPosition(win);
+}
