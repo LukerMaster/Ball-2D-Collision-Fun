@@ -8,7 +8,7 @@ StateMenu::StateMenu(EnvVariables& vars)
 	for (int i = 0; i < 8; i++)
 	{
 		ballVec.push_back(Ball(i,
-			sf::Vector2f((i % 6) * 100, (i % 6) * 100),
+			sf::Vector2f((i % 3) * 140 + rand()%20 + 200, rand()%120 + 300),
 			40,
 			20000,
 			sf::Color(rand() % 30 + 50, rand() % 30 + 50, rand() % 30 + 50),
