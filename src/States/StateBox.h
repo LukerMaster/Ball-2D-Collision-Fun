@@ -1,18 +1,19 @@
 #pragma once
 #include "State.h"
 #include "../Box.h"
-#include "../ContextMenu.h"
 
 #include <iostream>
 
 class StateBox :
 	public State
 {
+protected:
 	sf::Text _fps;
 	Box _box;
 	bool _prevClicked;
-	ContextMenu _menu;
 	sf::Vector2f _dragEnd;
+	sf::Vector2f _GetVector(sf::Vector2f from, sf::Vector2f to);
+	sf::Color _getHSVColor(int hue, float sat, float val);
 public:
 	StateBox(EnvVariables& vars);
 	void Update(float dt);

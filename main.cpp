@@ -2,6 +2,9 @@
 #include "src/AppInstance.h"
 #include "src/States/StateBox.h"
 #include "src/States/StateMenu.h"
+#include "src/TransitionAnim.h"
+
+#define DEBUG
 
 #include <iostream>
 //v0.0.2
@@ -27,7 +30,7 @@ int main()
 	debug_fps.setOutlineColor({ 30, 30, 30 });
 	debug_fps.setOutlineThickness(1);
 	
-	TransitionAnim transition(instance.vars());
+	TransitionAnim transition;
 
 	sf::Event eventHandler;
 
@@ -39,48 +42,57 @@ int main()
 		//
 		//
 		//
-		instance.states[(int)instance.vars().curState]->Update(instance.vars().dt);
-		if (instance.vars().transition)
+		instance.states[(int)instance._vars.curState]->Update(instance._vars.dt);
+
+		if (instance._vars.transition)
 		{
-			transition.Play({ 600, 600 }, 4.0f);
+			transition.Progress({ 600, 600 }, instance._vars.dt, instance._vars.window, 3.0f);
+			if (transition.GetPercentage() > 0.5f)
+				instance._vars.curState = instance._vars.nextState;
+			if (transition.GetPercentage() >= 1.0f)
+			{
+				transition.Reset();
+				instance._vars.transition = false;
+			}
+				
 		}
-		instance.vars().window.draw(debug_fps);
-		instance.vars().window.display();
+		instance._vars.window.draw(debug_fps);
+		instance._vars.window.display();
 		//
 		//
 		//
 
 
 		// Events
-		instance.vars().window.pollEvent(eventHandler);
+		instance._vars.window.pollEvent(eventHandler);
 		if (eventHandler.type == sf::Event::Closed)
 		{
-			instance.vars().options.isOpen;
-			instance.vars().window.close();
+			instance._vars.options.isOpen;
+			instance._vars.window.close();
 		}
 
 		//Key presses
-		instance.vars().inputs.checkKeyPresses();
-		instance.vars().inputs.checkMousePos(instance.vars().window);
+		instance._vars.inputs.checkKeyPresses();
+		instance._vars.inputs.checkMousePos(instance._vars.window);
 		
 		// Time measurement
-		instance.vars().dt = time.getElapsedTime().asMicroseconds();
+		instance._vars.dt = time.getElapsedTime().asMicroseconds();
 
 
 
 		if (instance.vars().dt < 4000)
 		{
-			sf::sleep(sf::microseconds(4000 - (double)instance.vars().dt));
+			sf::sleep(sf::microseconds(4000 - (double)instance._vars.dt));
 		}
 
-		if (instance.vars().frame % 20 == 0)
+		if (instance._vars.frame % 20 == 0)
 			debug_fps.setString( std::to_string(1000000 / time.getElapsedTime().asMicroseconds()) + " FPS");
 
-		instance.vars().real_dt = time.getElapsedTime().asMicroseconds();
-		instance.vars().dt = time.getElapsedTime().asMicroseconds();
-		if (instance.vars().dt > 4000) instance.vars().dt = 4000;
+		instance._vars.real_dt = time.getElapsedTime().asMicroseconds();
+		instance._vars.dt = time.getElapsedTime().asMicroseconds();
+		if (instance._vars.dt > 4000) instance._vars.dt = 4000;
 		time.restart();
-		instance.vars().frame++;
+		instance._vars.frame++;
 	}
 	return 0;
 }

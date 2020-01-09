@@ -1,5 +1,10 @@
 #include "Box.h"
 
+float Box::_DotProduct(sf::Vector2f v1, sf::Vector2f v2)
+{
+	return (v1.x * v2.x) + (v1.y * v2.y);
+}
+
 Box::Box()
 {
 }
@@ -10,7 +15,7 @@ Box::Box(std::vector<Ball> ballVec, sf::Vector2f boxSize, float wall_stiffness, 
 	bgColor(bg_color),
 	gravity(gravity_mult),
 	balls(ballVec),
-	selected(-1)
+	_selected(-1)
 {
 	srand(time(NULL));
 	_texture.create(size.x, size.y);
@@ -47,15 +52,15 @@ void Box::Update(float dt)
 	}
 }
 
-void Box::Draw(EnvVariables& vars)
+void Box::Draw(sf::RenderWindow& window)
 {
 	sf::RectangleShape boxShape;
 	boxShape.setFillColor(bgColor);
 	boxShape.setSize({size.x, size.y});
-	vars.window.draw(boxShape);
+	window.draw(boxShape);
 	for (int i = 0; i < balls.size(); i++)
 	{
-		vars.window.draw(balls[i].GetShape());
+		window.draw(balls[i].GetShape());
 	}
 }
 
@@ -170,11 +175,11 @@ void Box::DynamicCollision(Ball& b1, Ball& b2)
 
 		//Dynamic collision
 
-		float dPr1tan = Addons::dot_product(b1.GetVelocity(), tangental);
-		float dPr2tan = Addons::dot_product(b2.GetVelocity(), tangental);
+		float dPr1tan = _DotProduct(b1.GetVelocity(), tangental);
+		float dPr2tan = _DotProduct(b2.GetVelocity(), tangental);
 
-		float dPr1nor = Addons::dot_product(b1.GetVelocity(), normal);
-		float dPr2nor = Addons::dot_product(b2.GetVelocity(), normal);
+		float dPr1nor = _DotProduct(b1.GetVelocity(), normal);
+		float dPr2nor = _DotProduct(b2.GetVelocity(), normal);
 
 		float momentum1 = (dPr1nor * (b1.GetMass() - b2.GetMass()) + 2.0f * b2.GetMass() * dPr2nor) / (b1.GetMass() + b2.GetMass());
 		float momentum2 = (dPr2nor * (b2.GetMass() - b1.GetMass()) + 2.0f * b1.GetMass() * dPr1nor) / (b1.GetMass() + b2.GetMass());
@@ -185,7 +190,12 @@ void Box::DynamicCollision(Ball& b1, Ball& b2)
 
 void Box::PullByGravity(Ball& b1)
 {
-	b1.AddForce({ 0, gravity * b1.GetMass() * 0.000001f });
+	b1.AddForce({ 0, gravity * 9.81f * b1.GetMass() * 0.000001f });
+}
+
+void Box::UpdateGravity(float multiplier)
+{
+	gravity = multiplier;
 }
 
 void Box::AddWoosh(sf::Vector2f direction)
@@ -203,7 +213,7 @@ void Box::AddBall(Ball ball)
 
 bool Box::isAnyBallSelected()
 {
-	if (selected != -1)
+	if (_selected != -1)
 		return true;
 	else
 		return false;
@@ -211,12 +221,12 @@ bool Box::isAnyBallSelected()
 
 void Box::SelectBallUnder(sf::Vector2i pos)
 {
-	selected = -1;
+	_selected = -1;
 	for (int i = 0; i < balls.size(); i++)
 	{
 		if (GetDistance(sf::Vector2f(pos), balls[i].GetPosition()) < balls[i].GetRadius())
 		{
-			selected = i;
+			_selected = i;
 			break;
 		}
 	}
@@ -224,19 +234,19 @@ void Box::SelectBallUnder(sf::Vector2i pos)
 
 sf::Vector2f Box::GetPosOfSelected()
 {
-	if (selected != -1)
-		return balls[selected].GetPosition();
+	if (_selected != -1)
+		return balls[_selected].GetPosition();
 	else return sf::Vector2f(0, 0);
 
 }
 
 void Box::AddForceToSelected(sf::Vector2f force)
 {
-	if (selected != -1)
-		balls[selected].AddForce(force);
+	if (_selected != -1)
+		balls[_selected].AddForce(force);
 }
 
 void Box::DeselectBall()
 {
-	selected = -1;
+	_selected = -1;
 }

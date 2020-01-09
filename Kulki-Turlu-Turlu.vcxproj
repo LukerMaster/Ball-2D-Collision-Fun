@@ -139,35 +139,31 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\ContextMenu.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\Addons.cpp" />
     <ClCompile Include="src\AppInstance.cpp" />
     <ClCompile Include="src\Ball.cpp" />
     <ClCompile Include="src\Box.cpp" />
     <ClCompile Include="src\Button.cpp" />
-    <ClCompile Include="src\ButtonFunctions.cpp" />
     <ClCompile Include="src\EnvVariables.cpp" />
     <ClCompile Include="src\eStates.cpp" />
     <ClCompile Include="src\States\State.cpp" />
     <ClCompile Include="src\States\StateBox.cpp" />
     <ClCompile Include="src\States\StateMenu.cpp" />
-    <ClCompile Include="src\States\TransitionAnim.cpp" />
+    <ClCompile Include="src\TransitionAnim.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\ContextMenu.h" />
     <ClInclude Include="src\Addons.h" />
     <ClInclude Include="src\AppInstance.h" />
     <ClInclude Include="src\Ball.h" />
     <ClInclude Include="src\Box.h" />
     <ClInclude Include="src\Button.h" />
-    <ClInclude Include="src\ButtonFunctions.h" />
     <ClInclude Include="src\EnvVariables.h" />
     <ClInclude Include="src\eStates.h" />
     <ClInclude Include="src\States\State.h" />
     <ClInclude Include="src\States\StateBox.h" />
     <ClInclude Include="src\States\StateMenu.h" />
-    <ClInclude Include="src\States\TransitionAnim.h" />
+    <ClInclude Include="src\TransitionAnim.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

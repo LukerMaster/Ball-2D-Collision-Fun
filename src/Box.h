@@ -7,7 +7,6 @@
 #include "SFML/Audio.hpp"
 
 #include "Ball.h"
-#include "Addons.h"
 
 #include <iostream>
 
@@ -15,10 +14,12 @@ class Box
 {
 private:
 	sf::Texture _texture;
-	int selected;
+	int _selected;
+protected:
+	float _DotProduct(sf::Vector2f v1, sf::Vector2f v2);
 public:
 	Box();
-	Box(std::vector<Ball> ballVec, sf::Vector2f boxSize, float wall_stiffness = 0.9f, float gravity_mult = 9.81f, sf::Color bg_color = {40, 40, 40}); // No wall collision if stiffness = -1.0f
+	Box(std::vector<Ball> ballVec, sf::Vector2f boxSize, float wall_stiffness = 0.9f, float gravity_mult = 1.0f, sf::Color bg_color = {40, 40, 40}); // No wall collision if stiffness = -1.0f
 	std::vector<Ball> balls;
 	sf::Vector2f size;
 	float wallStiffness; // If ball bounces off the wall, its speed is multiplied by this.
@@ -26,7 +27,7 @@ public:
 	sf::Color bgColor;
 
 	void Update(float dt);
-	void Draw(EnvVariables& vars);
+	void Draw(sf::RenderWindow& window);
 
 	float GetDistance(sf::Vector2f point1, sf::Vector2f point2);
 	float GetSDistance(sf::Vector2f point1, sf::Vector2f point2); // If calulates 0, returns 1.
@@ -40,6 +41,7 @@ public:
 	void StaticCollision(Ball& b1, Ball& b2);
 	void DynamicCollision(Ball& b1, Ball& b2);
 	void PullByGravity(Ball& b1);
+	void UpdateGravity(float multiplier);
 
 	void AddWoosh(sf::Vector2f direction); // Adds some woosh to woosh all the balls.
 	void AddBall(Ball ball);

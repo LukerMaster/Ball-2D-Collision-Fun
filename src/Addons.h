@@ -2,7 +2,6 @@
 #include "EnvVariables.h"
 #include "SFML/Graphics.hpp"
 
-#include <iostream>
 
 class Addons
 {
