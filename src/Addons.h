@@ -13,4 +13,5 @@ public:
 	static sf::Color shift_color(const sf::Color& current, sf::Color target, int speed = 1);
 	static float reverse_lerp(float start, float end, float value);
 	static sf::Color hsv(int hue, float sat, float val);
+	static sf::Vector2f get_vector(sf::Vector2f from, sf::Vector2f to);
 };

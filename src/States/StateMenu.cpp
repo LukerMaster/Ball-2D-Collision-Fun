@@ -14,6 +14,11 @@ StateMenu::StateMenu(EnvVariables& vars)
 			sf::Color(rand() % 30 + 50, rand() % 30 + 50, rand() % 30 + 50),
 			sf::Vector2f(rand()%10 * 0.00001f, rand() % 10 * 0.00001f)));
 	}
+	_options.push_back(sf::Text("Woosh", vars.assets.font, 30));
+	_options.push_back(sf::Text("Gravity", vars.assets.font, 30));
+
+	_options[0].setPosition({ 50, 260 });
+	_options[1].setPosition({ 50, 320 });
 	// Start button
 	_buttons.push_back(Button(_vars, ButtonFunctions::runBox, "Open the box.", "Opens the box with balls and let's you start playing.", { 10, 10 }));
 	// Exit button
@@ -22,7 +27,14 @@ StateMenu::StateMenu(EnvVariables& vars)
 	// Reset button
 	_buttons.push_back(Button(_vars, ButtonFunctions::resetBox, "Reset box.", "Resets the contents of the box.", { 10, 60 }));
 	_buttons[2].SetColors({ 0, 50, 255 });
-
+	// Less woosh
+	_buttons.push_back(Button(_vars, ButtonFunctions::lessWoosh, " <", "Less woosh.", { 10, 260 }, { 40, 40 }));
+	// More woosh
+	_buttons.push_back(Button(_vars, ButtonFunctions::moreWoosh, " >", "Less woosh.", { 150, 260 }, { 40, 40 }));
+	// Less gravity
+	_buttons.push_back(Button(_vars, ButtonFunctions::lessGravity, " <", "Less gravity.", { 10, 320 }, { 40, 40 }));
+	// More gravity
+	_buttons.push_back(Button(_vars, ButtonFunctions::moreGravity, " >", "More gravity.", { 150, 320 }, { 40, 40 }));
 	// Main text in menu.
 	_name.setString("Balls2D");
 	_name.setCharacterSize(90);
@@ -45,6 +57,13 @@ void StateMenu::Update(float dt)
 	{
 		_buttons[i].Draw();
 		_buttons[i].Update(dt);
+	}
+
+	_options[0].setString("Woosh		" + std::to_string((int)ceil((_vars.options.wooshPower * 5000))) + "%");
+	_options[1].setString("Gravity		" + std::to_string((int)(_vars.options.gravityScale * 100)) + "%");
+	for (int i = 0; i < _options.size(); i++)
+	{
+		_vars.window.draw(_options[i]);
 	}
 	_vars.window.draw(_name);
 	_vars.window.draw(_author);

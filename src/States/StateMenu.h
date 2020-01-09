@@ -13,6 +13,7 @@ private:
 	std::vector<Button> _buttons;
 	sf::Text _name;
 	sf::Text _author;
+	std::vector<sf::Text> _options;
 public:
 	StateMenu(EnvVariables& vars);
 	void Update(float dt);

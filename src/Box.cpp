@@ -9,7 +9,8 @@ Box::Box(std::vector<Ball> ballVec, sf::Vector2f boxSize, float wall_stiffness, 
 	wallStiffness(wall_stiffness),
 	bgColor(bg_color),
 	gravity(gravity_mult),
-	balls(ballVec)
+	balls(ballVec),
+	selected(-1)
 {
 	srand(time(NULL));
 	_texture.create(size.x, size.y);
@@ -198,4 +199,44 @@ void Box::AddWoosh(sf::Vector2f direction)
 void Box::AddBall(Ball ball)
 {
 	balls.push_back(ball);
+}
+
+bool Box::isAnyBallSelected()
+{
+	if (selected != -1)
+		return true;
+	else
+		return false;
+}
+
+void Box::SelectBallUnder(sf::Vector2i pos)
+{
+	selected = -1;
+	for (int i = 0; i < balls.size(); i++)
+	{
+		if (GetDistance(sf::Vector2f(pos), balls[i].GetPosition()) < balls[i].GetRadius())
+		{
+			selected = i;
+			break;
+		}
+	}
+}
+
+sf::Vector2f Box::GetPosOfSelected()
+{
+	if (selected != -1)
+		return balls[selected].GetPosition();
+	else return sf::Vector2f(0, 0);
+
+}
+
+void Box::AddForceToSelected(sf::Vector2f force)
+{
+	if (selected != -1)
+		balls[selected].AddForce(force);
+}
+
+void Box::DeselectBall()
+{
+	selected = -1;
 }

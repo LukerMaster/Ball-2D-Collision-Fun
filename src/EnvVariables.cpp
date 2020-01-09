@@ -7,6 +7,7 @@ EnvVariables::EnvVariables()
 	options.coloredHits = false;
 	options.isOpen = true;
 	options.wooshPower = 0.02f;
+	options.gravityScale = 1.0f;
 
 	inputs.down = false;
 	inputs.up = false;

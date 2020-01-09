@@ -16,8 +16,12 @@ struct Options // Program-specific
 
 	bool coloredHits; // Are balls colored red on collision.
 	float wooshPower; // How powerful wooshes are. See Box::AddWoosh()
-
+	float gravityScale;
 	bool resetBox;
+	enum ballColor
+	{
+		white, rainbow
+	};
 };
 
 struct Inputs

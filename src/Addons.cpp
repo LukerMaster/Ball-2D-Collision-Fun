@@ -81,3 +81,8 @@ sf::Color Addons::hsv(int hue, float sat, float val)
 	}
 }
 
+sf::Vector2f Addons::get_vector(sf::Vector2f from, sf::Vector2f to)
+{
+		return sf::Vector2f(to.x - from.x, to.y - from.y);
+}
+

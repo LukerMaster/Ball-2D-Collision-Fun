@@ -58,7 +58,6 @@ void TransitionAnim::Play(sf::Vector2i size, float speed) // Percentage from 0.0
 	}
 	else if (percentage >= 0.5f && percentage < 1.0f)
 	{
-		_vars.curState = _vars.nextState;
 		float bAnim = Addons::reverse_lerp(0.5f, 1.0f, percentage);
 		bAnim = bAnim;
 		boxes[0].setRotation(-90);
@@ -73,6 +72,8 @@ void TransitionAnim::Play(sf::Vector2i size, float speed) // Percentage from 0.0
 		_box.balls[0].moveTo({ size.x * 0.4f + cAnim * 0.2f * size.x, size.y + _box.balls[0].GetRadius() - cAnim * (size.y + 2 * _box.balls[0].GetRadius()) });
 		_box.balls[0].SetVelocity({ 0, -spd * 2 * speed });
 	}
+	if (percentage > 0.5f)
+		_vars.curState = _vars.nextState;
 
 	_vars.window.draw(boxes[0]);
 	_vars.window.draw(boxes[1]);

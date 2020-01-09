@@ -15,6 +15,7 @@ class Box
 {
 private:
 	sf::Texture _texture;
+	int selected;
 public:
 	Box();
 	Box(std::vector<Ball> ballVec, sf::Vector2f boxSize, float wall_stiffness = 0.9f, float gravity_mult = 9.81f, sf::Color bg_color = {40, 40, 40}); // No wall collision if stiffness = -1.0f
@@ -42,5 +43,11 @@ public:
 
 	void AddWoosh(sf::Vector2f direction); // Adds some woosh to woosh all the balls.
 	void AddBall(Ball ball);
+
+	bool isAnyBallSelected();
+	void SelectBallUnder(sf::Vector2i pos);
+	sf::Vector2f GetPosOfSelected();
+	void AddForceToSelected(sf::Vector2f force);
+	void DeselectBall();
 };
 

@@ -34,18 +34,37 @@ void StateBox::Update(float dt)
 	}
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && _prevClicked == false)
 	{
-		_box.AddBall(Ball(0, sf::Vector2f(sf::Mouse::getPosition(_vars.window)), 15.0f, 4500.0f, Addons::hsv(rand() % 361, 1.0f, 1.0f)));
+
+		//_box.AddBall(Ball(0, sf::Vector2f(sf::Mouse::getPosition(_vars.window)), 15.0f, 4500.0f, Addons::hsv(rand() % 361, 1.0f, 1.0f)));
 		//if (_menu.isOpen() && !_menu.isHovered())
 			//_menu.Hide();
 		//if (!_menu.isOpen())
 			//_menu.Open(1.0f, sf::Mouse::getPosition(_vars.window));
+		_box.SelectBallUnder(_vars.inputs.mouse_pos);
+	}
+	if (!sf::Mouse::isButtonPressed(sf::Mouse::Left) && _prevClicked == true)
+	{
+		_box.AddForceToSelected(Addons::get_vector(sf::Vector2f(_vars.inputs.mouse_pos),_box.GetPosOfSelected()  ) * 0.01f);
+		_box.DeselectBall();
 	}
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
 	{
-		_box.AddBall(Ball(0, sf::Vector2f(sf::Mouse::getPosition(_vars.window)), 5.0f, 1000.0f, Addons::hsv(rand()%361, 1.0f, 1.0f)));
+		_box.AddBall(Ball(0, sf::Vector2f(sf::Mouse::getPosition(_vars.window)), 10.0f, 1000.0f, Addons::hsv(rand()%361, 1.0f, 1.0f)));
 	}
 	_box.Update(dt * 0.1f);
 	_box.Draw(_vars);
+
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+	{
+		if (_box.isAnyBallSelected())
+		{
+			sf::Vertex line[2];
+			line[0].position = _box.GetPosOfSelected();
+			line[1].position = sf::Vector2f(_vars.inputs.mouse_pos);
+			_vars.window.draw(line, 2, sf::Lines);
+		}
+	}
+
 
 	if (_menu.isOpen())
 	{
@@ -62,5 +81,5 @@ void StateBox::CreateBox()
 	{
 		ballVec.push_back(Ball(i, sf::Vector2f(rand() % 600, rand() % 200), 5.0f, 1000.0f, { 220, 255, 220 }, { 0.00003, 0.00004 }));
 	}
-	_box = Box(ballVec, { 600, 600 }, 0.5f, 9.81f);
+	_box = Box(ballVec, { 600, 600 }, 0.5f, 9.81f * _vars.options.gravityScale);
 }

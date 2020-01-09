@@ -12,6 +12,7 @@ class StateBox :
 	Box _box;
 	bool _prevClicked;
 	ContextMenu _menu;
+	sf::Vector2f _dragEnd;
 public:
 	StateBox(EnvVariables& vars);
 	void Update(float dt);
