@@ -59,11 +59,18 @@ StateBox::StateBox(EnvVariables& vars)
 
 void StateBox::Update(float dt)
 {
+	// If box is reset.
 	if (_vars.options.resetBox)
 	{
 		CreateBox();
 		_vars.options.resetBox = false;
 	}
+	// If balls hitting each other are colored.
+	if (_vars.options.coloredHits)
+		_box.coloredHits = true;
+	else
+		_box.coloredHits = false;
+
 	_box.UpdateGravity(_vars.options.gravityScale);
 	if (_vars.inputs.left)  _box.AddWoosh({ (float)-_vars.options.wooshPower, 0 });
 	if (_vars.inputs.right) _box.AddWoosh({ (float)_vars.options.wooshPower,  0 });
@@ -80,12 +87,12 @@ void StateBox::Update(float dt)
 	}
 	if (!sf::Mouse::isButtonPressed(sf::Mouse::Left) && _prevClicked == true)
 	{
-		_box.AddForceToSelected(_GetVector(sf::Vector2f(_vars.inputs.mouse_pos),_box.GetPosOfSelected() ) * _GetDistance(sf::Vector2f(_vars.inputs.mouse_pos), _box.GetPosOfSelected()) * 0.001f );
+		_box.AddForceToSelected(_GetVector(sf::Vector2f(_vars.inputs.mouse_pos),_box.GetPosOfSelected() ) * _GetDistance(sf::Vector2f(_vars.inputs.mouse_pos), _box.GetPosOfSelected()) * 0.0001f );
 		_box.DeselectBall();
 	}
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
 	{
-		_box.AddBall(Ball(0, sf::Vector2f(sf::Mouse::getPosition(_vars.window)), 10.0f, 1000.0f, _getHSVColor(rand()%361, 1.0f, 1.0f)));
+		_box.AddBall(Ball(0, sf::Vector2f(sf::Mouse::getPosition(_vars.window)), 10.0f, 200.0f, _getHSVColor(rand()%361, 1.0f, 1.0f)));
 	}
 	_box.Update(dt * 0.1f);
 	_box.Draw(_vars.window);

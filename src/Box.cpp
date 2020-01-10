@@ -15,7 +15,8 @@ Box::Box(std::vector<Ball> ballVec, sf::Vector2f boxSize, float wall_stiffness, 
 	bgColor(bg_color),
 	gravity(gravity_mult),
 	balls(ballVec),
-	_selected(-1)
+	_selected(-1),
+	coloredHits(false)
 {
 	srand(time(NULL));
 	_texture.create(size.x, size.y);
@@ -155,10 +156,6 @@ void Box::StaticCollision(Ball& b1, Ball& b2)
 
 	b1.move((-overlap * (b2.GetMass() / (b1.GetMass() + b2.GetMass())) * vector) / distance);
 	b2.move((overlap * (b1.GetMass() / (b1.GetMass() + b2.GetMass())) * vector) / distance);
-	
-	
-	//b1.SetColor({ 0, 0, 255 });
-	//b2.SetColor({ 0, 0, 255 });
 }
 
 void Box::DynamicCollision(Ball& b1, Ball& b2)
@@ -185,6 +182,12 @@ void Box::DynamicCollision(Ball& b1, Ball& b2)
 		float momentum2 = (dPr2nor * (b2.GetMass() - b1.GetMass()) + 2.0f * b1.GetMass() * dPr1nor) / (b1.GetMass() + b2.GetMass());
 		b1.SetVelocity((tangental * dPr1tan) + (normal * momentum1));
 		b2.SetVelocity((tangental * dPr2tan) + (normal * momentum2));
+
+		if (coloredHits)
+		{
+			b1.SetColor({ 255, 255, 255, 255 });
+			b2.SetColor({ 255, 255, 255, 255 });
+		}
 	}
 }
 

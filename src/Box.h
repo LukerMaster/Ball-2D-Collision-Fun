@@ -25,6 +25,7 @@ public:
 	float wallStiffness; // If ball bounces off the wall, its speed is multiplied by this.
 	float gravity;
 	sf::Color bgColor;
+	bool coloredHits;
 
 	void Update(float dt);
 	void Draw(sf::RenderWindow& window);

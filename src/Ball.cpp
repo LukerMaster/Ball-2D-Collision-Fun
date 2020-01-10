@@ -1,5 +1,28 @@
 #include "Ball.h"
 
+sf::Color Ball::_GetShiftedColor(const sf::Color& current, sf::Color target, int speed)
+{
+	sf::Color returned = current; // This is because sf::getFillColor() only returns const&.
+
+	if (abs(returned.r - target.r) < speed) returned.r = target.r;
+	if (abs(returned.g - target.g) < speed) returned.g = target.g;
+	if (abs(returned.b - target.b) < speed) returned.b = target.b;
+	if (abs(returned.a - target.a) < speed) returned.a = target.a;
+
+	if (returned.r > target.r) returned.r -= speed;
+	if (returned.r < target.r) returned.r += speed;
+
+	if (returned.g > target.g) returned.g -= speed;
+	if (returned.g < target.g) returned.g += speed;
+
+	if (returned.b > target.b) returned.b -= speed;
+	if (returned.b < target.b) returned.b += speed;
+
+	if (returned.a > target.a) returned.a -= speed;
+	if (returned.a < target.a) returned.a += speed;
+	return returned;
+}
+
 Ball::Ball(int Id, sf::Vector2f position, float radius, float mass, sf::Color custom_color, sf::Vector2f starting_vel)
 	: _pos(position),
 	_mass(mass),
@@ -106,13 +129,7 @@ void Ball::Update(float dt)
 	if (fabs(_acc.x) > 0.00002f) _acc.x = 0;
 	if (fabs(_acc.y) > 0.00002f) _acc.y = 0;
 
-	if (_shape.getFillColor().r > _baseColor.r) _shape.setFillColor(sf::Color(_shape.getFillColor().r - 1, _shape.getFillColor().g, _shape.getFillColor().b));
-	if (_shape.getFillColor().r < _baseColor.r) _shape.setFillColor(sf::Color(_shape.getFillColor().r + 1, _shape.getFillColor().g, _shape.getFillColor().b));
-	if (_shape.getFillColor().g > _baseColor.g) _shape.setFillColor(sf::Color(_shape.getFillColor().r, _shape.getFillColor().g - 1, _shape.getFillColor().b));
-	if (_shape.getFillColor().g < _baseColor.g) _shape.setFillColor(sf::Color(_shape.getFillColor().r, _shape.getFillColor().g + 1, _shape.getFillColor().b));
-	if (_shape.getFillColor().b > _baseColor.b) _shape.setFillColor(sf::Color(_shape.getFillColor().r, _shape.getFillColor().g, _shape.getFillColor().b - 1));
-	if (_shape.getFillColor().b < _baseColor.b) _shape.setFillColor(sf::Color(_shape.getFillColor().r, _shape.getFillColor().g, _shape.getFillColor().b + 1));
-
+	_shape.setFillColor(_GetShiftedColor(_shape.getFillColor(), _baseColor, 4));
 }
 
 bool Ball::IsPointInside(sf::Vector2f point)

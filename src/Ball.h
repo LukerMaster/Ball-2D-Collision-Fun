@@ -14,6 +14,7 @@ private:
 	sf::Vector2f _acc; // Acceleration
 	sf::CircleShape _shape;
 	sf::Color _baseColor; // If ball changes color, update method brings it back to this.
+	sf::Color _GetShiftedColor(const sf::Color& current, sf::Color target, int speed);
 
 public:
 
