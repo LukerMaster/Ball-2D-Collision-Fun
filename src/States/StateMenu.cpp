@@ -110,6 +110,7 @@ StateMenu::StateMenu(EnvVariables& vars)
 	_buttons.push_back(Button(btnFuncs::eMoreWoosh,   {150, 260}, { 40, 40  }, " >",			_vars.assets.font, _vars.assets.menuSelect, _vars.assets.menuClick, "More woosh power when you press arrow keys."));
 	_buttons.push_back(Button(btnFuncs::eLessGravity, {10, 320 }, { 40, 40  }, " <",			_vars.assets.font, _vars.assets.menuSelect, _vars.assets.menuClick, "More powerful gravity inside the box."));
 	_buttons.push_back(Button(btnFuncs::eMoreGravity, {150, 320}, { 40, 40  }, " >",			_vars.assets.font, _vars.assets.menuSelect, _vars.assets.menuClick, "Less powerful gravity inside the box."));
+	_buttons.push_back(Button(btnFuncs::eColoredBalls, {150, 320}, { 40, 40  }, " >",			_vars.assets.font, _vars.assets.menuSelect, _vars.assets.menuClick, "Less powerful gravity inside the box."));
 
 	_buttons[1].SetColors({ 0, 255, 50 });
 

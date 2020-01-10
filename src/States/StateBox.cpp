@@ -5,6 +5,11 @@ sf::Vector2f StateBox::_GetVector(sf::Vector2f from, sf::Vector2f to)
 	return sf::Vector2f(to.x - from.x, to.y - from.y);
 }
 
+float StateBox::_GetDistance(sf::Vector2f point1, sf::Vector2f point2)
+{
+	return sqrt(((point1.x - point2.x) * (point1.x - point2.x)) + ((point1.y - point2.y) * (point1.y - point2.y)));
+}
+
 sf::Color StateBox::_getHSVColor(int hue, float sat, float val)
 {
 	hue %= 360;
@@ -75,7 +80,7 @@ void StateBox::Update(float dt)
 	}
 	if (!sf::Mouse::isButtonPressed(sf::Mouse::Left) && _prevClicked == true)
 	{
-		_box.AddForceToSelected(_GetVector(sf::Vector2f(_vars.inputs.mouse_pos),_box.GetPosOfSelected()  ) * 0.01f);
+		_box.AddForceToSelected(_GetVector(sf::Vector2f(_vars.inputs.mouse_pos),_box.GetPosOfSelected() ) * _GetDistance(sf::Vector2f(_vars.inputs.mouse_pos), _box.GetPosOfSelected()) * 0.001f );
 		_box.DeselectBall();
 	}
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
@@ -101,9 +106,5 @@ void StateBox::Update(float dt)
 void StateBox::CreateBox()
 {
 	std::vector<Ball> ballVec;
-	for (int i = 0; i < 20; i++)
-	{
-		ballVec.push_back(Ball(i, sf::Vector2f(rand() % 600, rand() % 200), 5.0f, 1000.0f, { 220, 255, 220 }, { 0.00003, 0.00004 }));
-	}
 	_box = Box(ballVec, { 600, 600 }, 0.5f, 9.81f * _vars.options.gravityScale);
 }
