@@ -89,10 +89,8 @@ void StateBox::Update(float dt)
 	{
 		if (_box.isAnyBallSelected())
 		{
-			sf::Vertex line[2];
-			line[0].position = _box.GetPosOfSelected();
-			line[1].position = sf::Vector2f(_vars.inputs.mouse_pos);
-			_vars.window.draw(line, 2, sf::Lines);
+			Arrow arrow(_getHSVColor(rand() % 255, 1.0f, 1.0f)* sf::Color(255, 255, 255, 128), { 0, 0, 0, 0 }, 2.0f);
+			arrow.Draw(_vars.window, sf::Vector2f(_vars.inputs.mouse_pos), _box.GetPosOfSelected());
 		}
 	}
 

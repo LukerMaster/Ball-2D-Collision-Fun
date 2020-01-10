@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Arrow.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\Addons.cpp" />
     <ClCompile Include="src\AppInstance.cpp" />
@@ -153,6 +154,7 @@
     <ClCompile Include="src\TransitionAnim.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Arrow.h" />
     <ClInclude Include="src\Addons.h" />
     <ClInclude Include="src\AppInstance.h" />
     <ClInclude Include="src\Ball.h" />
