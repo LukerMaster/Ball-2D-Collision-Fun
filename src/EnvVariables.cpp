@@ -20,7 +20,7 @@ EnvVariables::EnvVariables()
 
 	assets.menuSelect.loadFromFile("assets/mnsl.mlg");
 	assets.menuClick.loadFromFile("assets/mnst.mlg");
-
+	assets.font.loadFromFile("assets/rb.mlg");
 	curState = eStates::stMenu;
 
 }

@@ -20,7 +20,6 @@ int main()
 
 	instance.states.push_back(&stateMenu);
 	instance.states.push_back(&stateBox);
-	instance.vars().assets.font.loadFromFile("assets/roboto.ttf");
 	sf::Clock time;
 	
 	sf::Text debug_fps;

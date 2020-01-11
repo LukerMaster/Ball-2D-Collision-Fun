@@ -1,5 +1,6 @@
 #pragma once
 #include "SFML/Graphics.hpp"
+#include "SFML/Audio.hpp"
 
 #include <iostream>
 
@@ -19,6 +20,7 @@ private:
 public:
 
 	Ball(int id, sf::Vector2f position = { 10, 10 }, float radius = 5, float mass = 1000, sf::Color = { 200, 200, 200 }, sf::Vector2f starting_vel = {0, 0}); // Materials: "wood", "stone", "paper"
+	sf::Sound hitSound;
 	float GetRadius();
 	float GetMass();
 

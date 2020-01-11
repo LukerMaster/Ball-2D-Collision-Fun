@@ -113,5 +113,5 @@ void StateBox::Update(float dt)
 void StateBox::CreateBox()
 {
 	std::vector<Ball> ballVec;
-	_box = Box(ballVec, { 600, 600 }, 0.5f, 9.81f * _vars.options.gravityScale);
+	_box = Box(ballVec, { 600, 600 }, 0.5f, 9.81f * _vars.options.gravityScale, {40, 40, 40}, "assets/cl.mlg");
 }

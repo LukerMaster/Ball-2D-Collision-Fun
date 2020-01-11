@@ -15,11 +15,12 @@ class Box
 private:
 	sf::Texture _texture;
 	int _selected;
+	sf::SoundBuffer _hitSound;
 protected:
 	float _DotProduct(sf::Vector2f v1, sf::Vector2f v2);
 public:
 	Box();
-	Box(std::vector<Ball> ballVec, sf::Vector2f boxSize, float wall_stiffness = 0.9f, float gravity_mult = 1.0f, sf::Color bg_color = {40, 40, 40}); // No wall collision if stiffness = -1.0f
+	Box(std::vector<Ball> ballVec, sf::Vector2f boxSize, float wall_stiffness = 0.9f, float gravity_mult = 1.0f, sf::Color bg_color = {40, 40, 40}, std::string path_to_hitsound = ""); // No wall collision if stiffness = -1.0f
 	std::vector<Ball> balls;
 	sf::Vector2f size;
 	float wallStiffness; // If ball bounces off the wall, its speed is multiplied by this.

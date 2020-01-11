@@ -9,7 +9,7 @@ Box::Box()
 {
 }
 
-Box::Box(std::vector<Ball> ballVec, sf::Vector2f boxSize, float wall_stiffness, float gravity_mult, sf::Color bg_color)
+Box::Box(std::vector<Ball> ballVec, sf::Vector2f boxSize, float wall_stiffness, float gravity_mult, sf::Color bg_color, std::string path_to_hitsound)
 	: size(boxSize),
 	wallStiffness(wall_stiffness),
 	bgColor(bg_color),
@@ -20,6 +20,15 @@ Box::Box(std::vector<Ball> ballVec, sf::Vector2f boxSize, float wall_stiffness, 
 {
 	srand(time(NULL));
 	_texture.create(size.x, size.y);
+	if (path_to_hitsound != "")
+	{
+		_hitSound.loadFromFile(path_to_hitsound);
+		for (int i = 0; i < balls.size(); i++)
+		{
+			balls[i].hitSound.setBuffer(_hitSound);
+		}
+	}
+	
 }
 
 void Box::Update(float dt)
@@ -160,12 +169,6 @@ void Box::StaticCollision(Ball& b1, Ball& b2)
 
 void Box::DynamicCollision(Ball& b1, Ball& b2)
 {
-	if (b1.GetMass() > b2.GetMass())
-	{
-		DynamicCollision(b2, b1);
-	}
-	else
-	{
 		float distance = GetSDistance(b2.GetPosition(), b1.GetPosition());
 		sf::Vector2f normal = GetVector(b1.GetPosition(), b2.GetPosition()) / distance;
 		sf::Vector2f tangental = { -normal.y, normal.x };
@@ -182,13 +185,18 @@ void Box::DynamicCollision(Ball& b1, Ball& b2)
 		float momentum2 = (dPr2nor * (b2.GetMass() - b1.GetMass()) + 2.0f * b1.GetMass() * dPr1nor) / (b1.GetMass() + b2.GetMass());
 		b1.SetVelocity((tangental * dPr1tan) + (normal * momentum1));
 		b2.SetVelocity((tangental * dPr2tan) + (normal * momentum2));
-
 		if (coloredHits)
 		{
 			b1.SetColor({ 255, 255, 255, 255 });
 			b2.SetColor({ 255, 255, 255, 255 });
 		}
-	}
+		if (fabs(momentum1) + fabs(momentum2) > 0.0005f)
+		{
+			//std::cout << cbrt((fabs(momentum1) + fabs(momentum2)) * 1000.0f) << std::endl;
+			//b1.hitSound.setVolume(fmin(cbrt((fabs(momentum1) + fabs(momentum2)) * 1000.0f), 10.0f));
+			//b1.hitSound.setPosition(size.x - b1.GetPosition().x, size.y - b1.GetPosition().y, 0);
+			//b1.hitSound.play();
+		}
 }
 
 void Box::PullByGravity(Ball& b1)
@@ -212,6 +220,7 @@ void Box::AddWoosh(sf::Vector2f direction)
 void Box::AddBall(Ball ball)
 {
 	balls.push_back(ball);
+	balls[balls.size() - 1].hitSound.setBuffer(_hitSound);
 }
 
 bool Box::isAnyBallSelected()
