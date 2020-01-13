@@ -8,6 +8,7 @@ struct Assets
 	sf::Font font;
 	sf::SoundBuffer menuSelect;
 	sf::SoundBuffer menuClick;
+	sf::Image icon;
 };
 
 struct Options // Program-specific

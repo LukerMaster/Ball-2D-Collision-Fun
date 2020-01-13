@@ -22,7 +22,10 @@ EnvVariables::EnvVariables()
 	assets.menuSelect.loadFromFile("assets/mnsl.mlg");
 	assets.menuClick.loadFromFile("assets/mnst.mlg");
 	assets.font.loadFromFile("assets/rb.mlg");
+	assets.icon.loadFromFile("assets/ng.mlg");
 	curState = eStates::stMenu;
+
+	window.setIcon(256, 256, assets.icon.getPixelsPtr());
 
 }
 

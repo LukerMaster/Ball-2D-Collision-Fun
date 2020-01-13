@@ -154,6 +154,7 @@
     <ClCompile Include="src\TransitionAnim.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="resource.h" />
     <ClInclude Include="src\Arrow.h" />
     <ClInclude Include="src\Addons.h" />
     <ClInclude Include="src\AppInstance.h" />
@@ -166,6 +167,12 @@
     <ClInclude Include="src\States\StateBox.h" />
     <ClInclude Include="src\States\StateMenu.h" />
     <ClInclude Include="src\TransitionAnim.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Kulki-Turlu-Turlu.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="C:\Users\Luker\Desktop\balls2d.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
