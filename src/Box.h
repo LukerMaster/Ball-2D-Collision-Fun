@@ -59,5 +59,7 @@ public:
 	sf::Vector2f GetPosOfSelected();
 	void AddForceToSelected(sf::Vector2f force, bool timesMass = false);
 	void DeselectBall();
+
+	int GetBallCount();
 };
 

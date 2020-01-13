@@ -102,9 +102,10 @@ void StateBox::Update(float dt)
 	}
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
 	{
-		_box.AddBall(Ball(0, sf::Vector2f(sf::Mouse::getPosition(_vars.window)), 10.0f, 200.0f, _getHSVColor(rand()%361, 1.0f, 1.0f)));
+		if (_box.GetBallCount() < 1000)
+			_box.AddBall(Ball(0, sf::Vector2f(sf::Mouse::getPosition(_vars.window)), 11.0f, 200.0f, _getHSVColor(rand()%361, 1.0f, 1.0f)));
 	}
-	if (cooldown == 0)
+	if (cooldown == 0 && _box.GetBallCount() < 1000)
 	{
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::M))
 		{

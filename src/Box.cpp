@@ -329,3 +329,8 @@ void Box::DeselectBall()
 {
 	_selected = -1;
 }
+
+int Box::GetBallCount()
+{
+	return balls.size();
+}
