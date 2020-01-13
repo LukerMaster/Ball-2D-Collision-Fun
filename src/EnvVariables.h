@@ -15,8 +15,10 @@ struct Options // Program-specific
 	bool isOpen; // Is the game open. 0 means exit.
 
 	bool coloredHits; // Are balls colored red on collision.
-	double wooshPower; // How powerful wooshes are. See Box::AddWoosh()
 	float gravityScale;
+	int wallStiffness;
+	int wooshPower; // How powerful wooshes are. See Box::AddWoosh()
+
 	bool resetBox;
 	enum ballColor
 	{

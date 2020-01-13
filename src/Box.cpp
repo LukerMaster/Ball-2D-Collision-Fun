@@ -1,4 +1,7 @@
 #include "Box.h"
+#include <iostream>
+#include <iomanip>
+#include <sstream>
 
 float Box::_DotProduct(sf::Vector2f v1, sf::Vector2f v2)
 {
@@ -16,7 +19,8 @@ Box::Box(std::vector<Ball> ballVec, sf::Vector2f boxSize, float wall_stiffness, 
 	gravity(gravity_mult),
 	balls(ballVec),
 	_selected(-1),
-	coloredHits(false)
+	coloredHits(false),
+	_hovered(-1)
 {
 	srand(time(NULL));
 	_texture.create(size.x, size.y);
@@ -34,31 +38,44 @@ Box::Box(std::vector<Ball> ballVec, sf::Vector2f boxSize, float wall_stiffness, 
 void Box::Update(float dt)
 {
 	std::vector<std::pair<Ball*, Ball*>> collided;
-	for (int i = 0; i < balls.size(); i++)
+
+	int simTimes = 4;
+	float timeStamp = dt / (float)simTimes;
+
+	for (int Updates = 0; Updates < simTimes; Updates++)
 	{
-		if (wallStiffness != -1.0f)
-			ContainInBox(balls[i]);
-		PullByGravity(balls[i]);
-		for (int j = i; j < balls.size(); j++)
+		for (auto& ball : balls)
 		{
-			if (i != j)
+			ball.Update(simTimes);
+			if (wallStiffness != -1.0f)
+				StaticContain(ball);
+		}
+		for (int i = 0; i < balls.size(); i++)
+		{
+			for (int j = i; j < balls.size(); j++)
 			{
-				if (DoBallsOverlap(balls[i], balls[j]))
+				if (i != j)
 				{
-					StaticCollision(balls[i], balls[j]);
-					if (i < j)
-						collided.push_back(std::make_pair(&balls[i], &balls[j]));
+					if (DoBallsOverlap(balls[i], balls[j]))
+					{
+						StaticCollision(balls[i], balls[j]);
+						if (i < j)
+							collided.push_back(std::make_pair(&balls[i], &balls[j]));
+					}
 				}
 			}
 		}
-	}
-	for (auto pair : collided)
-	{
-		DynamicCollision(*pair.first, *pair.second);
-	}
-	for (int i = 0; i < balls.size(); i++)
-	{
-		balls[i].Update(dt);
+			
+		for (int i = 0; i < balls.size(); i++)
+		{
+			PullByGravity(balls[i]);
+			if (wallStiffness != -1.0f)
+				DynamicContain(balls[i]);
+		}
+		for (auto pair : collided)
+		{
+			DynamicCollision(*pair.first, *pair.second);
+		}
 	}
 }
 
@@ -120,28 +137,28 @@ bool Box::DoBallsOverlap(Ball& b1, Ball& b2)
 		return false;
 }
 
-void Box::ContainInBox(Ball& ball)
+void Box::StaticContain(Ball& ball)
 {
 	if (ball.GetPosition().x + ball.GetRadius() > size.x)
-	{
 		ball.moveTo({ size.x - ball.GetRadius() , ball.GetPosition().y });
-		ball.SetVelocity({ -ball.GetVelocity().x * wallStiffness , ball.GetVelocity().y });
-	}
 	if (ball.GetPosition().x - ball.GetRadius() < 0)
-	{
 		ball.moveTo({ ball.GetRadius(), ball.GetPosition().y });
-		ball.SetVelocity({ -ball.GetVelocity().x * wallStiffness , ball.GetVelocity().y });
-	}
 	if (ball.GetPosition().y + ball.GetRadius() > size.y)
-	{
 		ball.moveTo({ ball.GetPosition().x , size.y - ball.GetRadius() });
-		ball.SetVelocity({ ball.GetVelocity().x , -ball.GetVelocity().y * wallStiffness });
-	}
 	if (ball.GetPosition().y - ball.GetRadius() < 0)
-	{
-		ball.moveTo({ ball.GetPosition().x , ball.GetRadius()});
+		ball.moveTo({ ball.GetPosition().x , ball.GetRadius() });
+}
+
+void Box::DynamicContain(Ball& ball)
+{
+	if (ball.GetPosition().x + ball.GetRadius() >= size.x)
+		ball.SetVelocity({ -ball.GetVelocity().x * wallStiffness , ball.GetVelocity().y });
+	if (ball.GetPosition().x - ball.GetRadius() <= 0)
+		ball.SetVelocity({ -ball.GetVelocity().x * wallStiffness , ball.GetVelocity().y });
+	if (ball.GetPosition().y + ball.GetRadius() >= size.y)
 		ball.SetVelocity({ ball.GetVelocity().x , -ball.GetVelocity().y * wallStiffness });
-	}
+	if (ball.GetPosition().y - ball.GetRadius() <= 0)
+		ball.SetVelocity({ ball.GetVelocity().x , -ball.GetVelocity().y * wallStiffness });
 }
 
 int Box::GetBallByPos(sf::Vector2i pos)
@@ -201,12 +218,18 @@ void Box::DynamicCollision(Ball& b1, Ball& b2)
 
 void Box::PullByGravity(Ball& b1)
 {
-	b1.AddForce({ 0, gravity * 9.81f * b1.GetMass() * 0.000001f });
+	//if (b1.GetVelocity())
+	b1.AddForce({ 0, gravity * 9.81f * b1.GetMass() * 0.00003f });
 }
 
 void Box::UpdateGravity(float multiplier)
 {
 	gravity = multiplier;
+}
+
+void Box::UpdateStiffness(float multiplier)
+{
+	wallStiffness = multiplier;
 }
 
 void Box::AddWoosh(sf::Vector2f direction)
@@ -244,6 +267,44 @@ void Box::SelectBallUnder(sf::Vector2i pos)
 	}
 }
 
+void Box::DrawHoveredInfo(sf::Vector2i mouse_pos, sf::RenderWindow& window, sf::Font& font)
+{
+	sf::Text info;
+	for (int i = 0; i < balls.size(); i++)
+	{
+		if (GetDistance(sf::Vector2f(mouse_pos), balls[i].GetPosition()) < balls[i].GetRadius())
+		{
+			_hovered = i;
+			break;
+		}
+	}
+	if (_hovered != -1)
+	{
+		std::stringstream spx, spy, svx, svy, mass;
+		spx << std::fixed << std::setprecision(2) << balls[_hovered].GetPosition().x;
+		spy << std::fixed << std::setprecision(2) << balls[_hovered].GetPosition().y;
+
+		svx << std::fixed << std::setprecision(2) << balls[_hovered].GetVelocity().x * 1000.0f;
+		svy << std::fixed << std::setprecision(2) << balls[_hovered].GetVelocity().y * 1000.0f;
+
+		mass << std::fixed << std::setprecision(2) << balls[_hovered].GetMass();
+
+		info.setString(
+			"Ball: " + std::to_string(_hovered) + " Total balls: " + std::to_string(balls.size()) + "\n" +
+			"Position:     (" + spx.str() + ", " + spy.str() + ")\n"
+			+ "Velocity:     (" + svx.str() + ", " + svy.str() + ")\n"
+			+ "Mass: " + mass.str() + "kg"
+		);
+		info.setFont(font);
+		info.setPosition(4, 4);
+		info.setCharacterSize(size.x / 20);
+		info.setFillColor({ 255, 255, 255, 220 });
+		info.setOutlineColor({ 0, 0, 0, 220 });
+		info.setOutlineThickness(2);
+		window.draw(info);
+	}
+}
+
 sf::Vector2f Box::GetPosOfSelected()
 {
 	if (_selected != -1)
@@ -252,10 +313,16 @@ sf::Vector2f Box::GetPosOfSelected()
 
 }
 
-void Box::AddForceToSelected(sf::Vector2f force)
+void Box::AddForceToSelected(sf::Vector2f force, bool timesMass)
 {
 	if (_selected != -1)
-		balls[_selected].AddForce(force);
+	{
+		if (timesMass)
+			balls[_selected].AddForce(force * balls[_selected].GetMass());
+		else
+			balls[_selected].AddForce(force);
+	}
+		
 }
 
 void Box::DeselectBall()

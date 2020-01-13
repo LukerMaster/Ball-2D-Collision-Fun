@@ -18,19 +18,19 @@ void StateMenu::btnResetBox()
 
 void StateMenu::btnMoreWoosh()
 {
-	if (_vars.options.wooshPower <= 0.995)
-		_vars.options.wooshPower += 0.005;
+	if (_vars.options.wooshPower < 800)
+		_vars.options.wooshPower += 25;
 }
 
 void StateMenu::btnLessWoosh()
 {
-	if (_vars.options.wooshPower >= 0.005)
-		_vars.options.wooshPower -= 0.005;
+	if (_vars.options.wooshPower > 0)
+		_vars.options.wooshPower -= 25;
 }
 
 void StateMenu::btnMoreGravity()
 {
-	if (_vars.options.gravityScale <= 4.75f)
+	if (_vars.options.gravityScale <= 2.75f)
 		_vars.options.gravityScale += 0.25f;
 }
 
@@ -46,6 +46,22 @@ void StateMenu::btnSwitchColoredHits()
 		_vars.options.coloredHits = false;
 	else
 		_vars.options.coloredHits = true;
+}
+
+void StateMenu::btnLessStiffness()
+{
+	if (_vars.options.wallStiffness > 100)
+		_vars.options.wallStiffness -= 1;
+	else if (_vars.options.wallStiffness >= 5)
+		_vars.options.wallStiffness -= 5;
+}
+
+void StateMenu::btnMoreStiffness()
+{
+	if (_vars.options.wallStiffness < 100)
+		_vars.options.wallStiffness += 5;
+	else if (_vars.options.wallStiffness < 105)
+		_vars.options.wallStiffness += 1;
 }
 
 void StateMenu::checkButtons()
@@ -79,6 +95,13 @@ void StateMenu::checkButtons()
 				break;
 			case eSwitchColoredHits:
 				btnSwitchColoredHits();
+				break;
+			case eLessStiffness:
+				btnLessStiffness();
+				break;
+			case eMoreStiffness:
+				btnMoreStiffness();
+				break;
 			default:
 			#ifdef DEBUG
 				std::cout << "Minor warn: Clicked a button without a function.\n";
@@ -94,6 +117,7 @@ void StateMenu::checkButtons()
 StateMenu::StateMenu(EnvVariables& vars)
 	:State(vars)
 {
+	srand(time(NULL));
 	// Creating menu balls animation
 	std::vector<Ball> ballVec;
 	for (int i = 0; i < 8; i++)
@@ -103,17 +127,19 @@ StateMenu::StateMenu(EnvVariables& vars)
 			40,
 			20000,
 			sf::Color(rand() % 30 + 50, rand() % 30 + 50, rand() % 30 + 50),
-			sf::Vector2f(rand()%10 * 0.00001f, rand() % 10 * 0.00001f)));
+			sf::Vector2f(rand()%10 * 0.002f, rand() % 10 * 0.002f)));
 	}
 
 	// Texts
 	_options.push_back(sf::Text("Woosh", vars.assets.font, 30));
 	_options.push_back(sf::Text("Gravity", vars.assets.font, 30));
 	_options.push_back(sf::Text("ColoredHits", vars.assets.font, 30));
+	_options.push_back(sf::Text("Stiffness", vars.assets.font, 30));
 
 	_options[0].setPosition({ 50, 260 });
 	_options[1].setPosition({ 50, 320 });
 	_options[2].setPosition({ 210, 110 });
+	_options[3].setPosition({ 50, 380 });
 	
 	// Buttons
 	_buttons.push_back(Button(btnFuncs::eRunBox,      { 10, 10 }, { 190, 40 }, "Open the box",		_vars.assets.font, _vars.assets.menuSelect, _vars.assets.menuClick,"Opens the box with balls and let's you start playing."));
@@ -124,8 +150,11 @@ StateMenu::StateMenu(EnvVariables& vars)
 	_buttons.push_back(Button(btnFuncs::eLessGravity, {10, 320 }, { 40, 40  }, " <",				_vars.assets.font, _vars.assets.menuSelect, _vars.assets.menuClick, "More powerful gravity inside the box."));
 	_buttons.push_back(Button(btnFuncs::eMoreGravity, {150, 320}, { 40, 40  }, " >",				_vars.assets.font, _vars.assets.menuSelect, _vars.assets.menuClick, "Less powerful gravity inside the box."));
 	_buttons.push_back(Button(btnFuncs::eSwitchColoredHits, {10, 110}, { 190, 40 }, "Colored Hits",_vars.assets.font, _vars.assets.menuSelect, _vars.assets.menuClick, "Less powerful gravity inside the box."));
+	_buttons.push_back(Button(btnFuncs::eLessStiffness, { 10, 380 }, { 40, 40 }, " <", _vars.assets.font, _vars.assets.menuSelect, _vars.assets.menuClick, "More energy is preserved from each hit in the wall."));
+	_buttons.push_back(Button(btnFuncs::eMoreStiffness, { 230, 380 }, { 40, 40 }, " >", _vars.assets.font, _vars.assets.menuSelect, _vars.assets.menuClick, "Less energy is preserved from each hit in the wall."));
 
 	// Button colors.
+	_buttons[0].SetColors({ 0, 255, 255 });
 	_buttons[1].SetColors({ 0, 255, 50 });
 	_buttons[2].SetColors({ 0, 50, 255 });
 	_buttons[7].SetColors({ 240, 240, 255 });
@@ -140,6 +169,12 @@ StateMenu::StateMenu(EnvVariables& vars)
 	_author.setCharacterSize(30);
 	_author.setPosition(400, 550);
 	_author.setFont(_vars.assets.font);
+
+	_controls.setString("                                                      Controls:\nLMB (+LCtrl to ignore mass) - Slingshot\n                                   RMB - Ball Drawing\n                 M, N, B, V, C - Additional Balls\n                                          G - The Big Ball");
+	_controls.setCharacterSize(20);
+	_controls.setPosition(250, 420);
+	
+	_controls.setFont(_vars.assets.font);
 	// Create animation
 	_animation = Box(ballVec, { 600, 600 }, 1.0f, 0.0f, { 30, 30, 30 });
 }
@@ -164,8 +199,9 @@ void StateMenu::Update(float dt)
 	}
 
 
-	_options[0].setString("Woosh		" + std::to_string((int)(_vars.options.wooshPower * 5001)) + "%");
+	_options[0].setString("Woosh		" + std::to_string(_vars.options.wooshPower) + "%");
 	_options[1].setString("Gravity		" + std::to_string((int)(_vars.options.gravityScale * 100)) + "%");
+	_options[3].setString("Wall Stiffness        " + std::to_string(_vars.options.wallStiffness) + "%");
 	for (int i = 0; i < _options.size(); i++)
 	{
 		_vars.window.draw(_options[i]);
@@ -175,4 +211,5 @@ void StateMenu::Update(float dt)
 
 	_vars.window.draw(_name);
 	_vars.window.draw(_author);
+	_vars.window.draw(_controls);
 }

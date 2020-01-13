@@ -2,12 +2,13 @@
 #include <iostream>
 
 EnvVariables::EnvVariables()
-	:window(sf::VideoMode(600, 600), "Kulki-Turlu-Turlu")
+	:window(sf::VideoMode(600, 600), "Kulki-Turlu-Turlu", sf::Style::Titlebar | sf::Style::Close)
 {
 	options.coloredHits = false;
 	options.isOpen = true;
-	options.wooshPower = 0.02;
+	options.wooshPower = 100;
 	options.gravityScale = 1.0f;
+	options.wallStiffness = 85;
 
 	inputs.down = false;
 	inputs.up = false;

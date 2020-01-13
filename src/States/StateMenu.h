@@ -12,7 +12,9 @@ enum btnFuncs
 	eMoreWoosh,
 	eLessGravity,
 	eMoreGravity,
-	eSwitchColoredHits
+	eSwitchColoredHits,
+	eLessStiffness,
+	eMoreStiffness
 };
 
 class StateMenu :
@@ -23,6 +25,7 @@ protected:
 	std::vector<Button> _buttons;
 	sf::Text _name;
 	sf::Text _author;
+	sf::Text _controls;
 	std::vector<sf::Text> _options;
 	std::string _coloredHits;
 	void btnRunBox();
@@ -33,6 +36,8 @@ protected:
 	void btnMoreGravity();
 	void btnLessGravity();
 	void btnSwitchColoredHits();
+	void btnLessStiffness();
+	void btnMoreStiffness();
 
 	void checkButtons();
 public:

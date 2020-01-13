@@ -52,6 +52,11 @@ const sf::Vector2f& Ball::GetForce()
 	return sf::Vector2f(_acc.x * _mass, _acc.y * _mass);
 }
 
+const sf::Vector2f& Ball::GetPrevPosition()
+{
+	return _prev_pos;
+}
+
 const sf::Vector2f& Ball::GetPosition()
 {
 	return _pos;
@@ -122,6 +127,7 @@ void Ball::SetColor(sf::Color color)
 
 void Ball::Update(float dt)
 {
+	_prev_pos = _pos;
 	_vel += _acc;
 	_pos += _vel * dt;
 	_shape.setPosition(_pos);
@@ -129,7 +135,7 @@ void Ball::Update(float dt)
 	if (fabs(_acc.x) > 0.00002f) _acc.x = 0;
 	if (fabs(_acc.y) > 0.00002f) _acc.y = 0;
 
-	_shape.setFillColor(_GetShiftedColor(_shape.getFillColor(), _baseColor, 4));
+	_shape.setFillColor(_GetShiftedColor(_shape.getFillColor(), _baseColor, 1));
 }
 
 bool Ball::IsPointInside(sf::Vector2f point)

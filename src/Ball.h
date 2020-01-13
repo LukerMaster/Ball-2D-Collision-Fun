@@ -10,6 +10,7 @@ private:
 	float _radius;
 	float _mass;
 
+	sf::Vector2f _prev_pos;
 	sf::Vector2f _pos; // position is based on this. Not sprite position.
 	sf::Vector2f _vel; // Velocity
 	sf::Vector2f _acc; // Acceleration
@@ -19,13 +20,15 @@ private:
 
 public:
 
-	Ball(int id, sf::Vector2f position = { 10, 10 }, float radius = 5, float mass = 1000, sf::Color = { 200, 200, 200 }, sf::Vector2f starting_vel = {0, 0}); // Materials: "wood", "stone", "paper"
+	Ball(int id, sf::Vector2f position = { 10, 10 }, float radius = 5, float mass = 1000, sf::Color = { 200, 200, 200 }, sf::Vector2f starting_vel = {0, 0});
 	sf::Sound hitSound;
 	float GetRadius();
 	float GetMass();
 
 	int id; // Unused
 	const sf::Vector2f& GetForce();
+
+	const sf::Vector2f& GetPrevPosition();
 	const sf::Vector2f& GetPosition();
 	const sf::Vector2f& GetVelocity();
 	const sf::Vector2f& GetAcceleration();
