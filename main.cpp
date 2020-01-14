@@ -63,12 +63,15 @@ int main()
 
 
 		// Events
-		instance._vars.window.pollEvent(eventHandler);
-		if (eventHandler.type == sf::Event::Closed)
+		if (instance._vars.window.pollEvent(eventHandler))
 		{
-			instance._vars.options.isOpen;
-			instance._vars.window.close();
+			if (eventHandler.type == sf::Event::Closed)
+			{
+				instance._vars.options.isOpen = 0;
+				instance._vars.window.close();
+			}
 		}
+		
 
 		//Key presses
 		instance._vars.inputs.checkKeyPresses();
