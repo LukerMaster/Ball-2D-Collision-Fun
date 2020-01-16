@@ -3,6 +3,10 @@
 #include <random>
 #include <numeric>
 #include <cmath>
+#include <iostream>
+#include <iomanip>
+#include <sstream>
+//#include <execution>
 #include "SFML/Graphics.hpp"
 #include "SFML/Audio.hpp"
 
@@ -54,6 +58,7 @@ public:
 
 	bool isAnyBallSelected();
 	void SelectBallUnder(sf::Vector2i pos);
+	int GetIDOfSelected();
 
 	void DrawHoveredInfo(sf::Vector2i mouse_pos ,sf::RenderWindow& window, sf::Font& font);
 	sf::Vector2f GetPosOfSelected();

@@ -1,7 +1,5 @@
 #include "Box.h"
-#include <iostream>
-#include <iomanip>
-#include <sstream>
+
 
 float Box::_DotProduct(sf::Vector2f v1, sf::Vector2f v2)
 {
@@ -32,7 +30,6 @@ Box::Box(std::vector<Ball> ballVec, sf::Vector2f boxSize, float wall_stiffness, 
 			balls[i].hitSound.setBuffer(_hitSound);
 		}
 	}
-	
 }
 
 void Box::Update(float dt)
@@ -46,7 +43,7 @@ void Box::Update(float dt)
 	{
 		for (auto& ball : balls)
 		{
-			ball.Update(simTimes);
+			ball.Update(timeStamp * 0.01f);
 			if (wallStiffness != -1.0f)
 				StaticContain(ball);
 		}
@@ -65,7 +62,6 @@ void Box::Update(float dt)
 				}
 			}
 		}
-			
 		for (int i = 0; i < balls.size(); i++)
 		{
 			PullByGravity(balls[i]);
@@ -265,6 +261,11 @@ void Box::SelectBallUnder(sf::Vector2i pos)
 			break;
 		}
 	}
+}
+
+int Box::GetIDOfSelected()
+{
+	return _selected;
 }
 
 void Box::DrawHoveredInfo(sf::Vector2i mouse_pos, sf::RenderWindow& window, sf::Font& font)

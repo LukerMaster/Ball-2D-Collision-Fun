@@ -84,11 +84,11 @@ void StateBox::Update(float dt)
 		_vars.transition = true;
 		_vars.nextState = eStates::stMenu;
 	}
-	if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && _prevClicked == false)
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && _prevClicked < 5)
 	{
 		_box.SelectBallUnder(_vars.inputs.mouse_pos);
 	}
-	if (!sf::Mouse::isButtonPressed(sf::Mouse::Left) && _prevClicked == true)
+	if (!sf::Mouse::isButtonPressed(sf::Mouse::Left) && _prevClicked)
 	{
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
 		{
@@ -155,7 +155,10 @@ void StateBox::Update(float dt)
 	_box.DrawHoveredInfo(_vars.inputs.mouse_pos, _vars.window, _vars.assets.font);
 
 
-	sf::Mouse::isButtonPressed(sf::Mouse::Left) ? _prevClicked = true : _prevClicked = false;
+	sf::Mouse::isButtonPressed(sf::Mouse::Left) ? _prevClicked++ : _prevClicked--;
+	_prevClicked = (_prevClicked < 0 ? 0 : _prevClicked);
+	_prevClicked = (_prevClicked > 5 ? 5 : _prevClicked);
+
 	cooldown > 0 ? cooldown-- : cooldown = cooldown;
 }
 
