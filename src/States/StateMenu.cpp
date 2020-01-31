@@ -115,7 +115,8 @@ void StateMenu::checkButtons()
 
 
 StateMenu::StateMenu(EnvVariables& vars)
-	:State(vars)
+	:State(vars),
+	_animation(std::vector<Ball>(), { 600, 600 }, 1.0f, 0.0f, { 30, 30, 30 })
 {
 	srand(time(NULL));
 	// Creating menu balls animation

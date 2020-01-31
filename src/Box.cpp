@@ -6,11 +6,23 @@ float Box::_DotProduct(sf::Vector2f v1, sf::Vector2f v2)
 	return (v1.x * v2.x) + (v1.y * v2.y);
 }
 
-Box::Box()
+bool Box::_isBallInZone(Ball& ball, sf::FloatRect rect)
 {
+	float closestX = std::clamp(ball.GetPosition().x, rect.getPosition().x, rect.getPosition().x + rect.width);
+	float closestY = std::clamp(ball.GetPosition().y, rect.getPosition().y, rect.getPosition().y + rect.height);
+
+	// Calculate the distance between the circle's center and this closest point
+	float distanceX = ball.GetPosition().x - closestX;
+	float distanceY = ball.GetPosition().y - closestY;
+
+	// If the distance is less than the circle's radius, an intersection occurs
+	float distanceSquared = (distanceX * distanceX) + (distanceY * distanceY);
+	return distanceSquared < (ball.GetRadius() * ball.GetRadius());
 }
 
-Box::Box(std::vector<Ball> ballVec, sf::Vector2f boxSize, float wall_stiffness, float gravity_mult, sf::Color bg_color, std::string path_to_hitsound)
+
+
+Box::Box(std::vector<Ball> ballVec, sf::Vector2f boxSize, float wall_stiffness, float gravity_mult, sf::Color bg_color, std::string path_to_hitsound, int collisionGrid)
 	: size(boxSize),
 	wallStiffness(wall_stiffness),
 	bgColor(bg_color),
@@ -18,7 +30,8 @@ Box::Box(std::vector<Ball> ballVec, sf::Vector2f boxSize, float wall_stiffness, 
 	balls(ballVec),
 	_selected(-1),
 	coloredHits(false),
-	_hovered(-1)
+	_hovered(-1),
+	_gridSize(collisionGrid)
 {
 	srand(time(NULL));
 	_texture.create(size.x, size.y);
@@ -28,6 +41,13 @@ Box::Box(std::vector<Ball> ballVec, sf::Vector2f boxSize, float wall_stiffness, 
 		for (int i = 0; i < balls.size(); i++)
 		{
 			balls[i].hitSound.setBuffer(_hitSound);
+		}
+	}
+	for (int i = 0; i < _gridSize; i++)
+	{
+		for (int j = 0; j < _gridSize; j++)
+		{
+			_zones.push_back(std::vector<Ball*>());
 		}
 	}
 }
@@ -46,21 +66,35 @@ void Box::Update(float dt)
 			ball.Update(timeStamp * 0.01f);
 			if (wallStiffness != -1.0f)
 				StaticContain(ball);
-		}
-		for (int i = 0; i < balls.size(); i++)
-		{
-			for (int j = i; j < balls.size(); j++)
+
+			for (int i = 0; i < _gridSize; i++)
 			{
-				if (i != j)
+				for (int j = 0; j < _gridSize; j++)
 				{
-					if (DoBallsOverlap(balls[i], balls[j]))
+					//std::cout << size.x / _gridSize << std::endl;
+					if (_isBallInZone(ball, { i * size.x / _gridSize, j * size.y / _gridSize, size.x / _gridSize, size.y / _gridSize }))
 					{
-						StaticCollision(balls[i], balls[j]);
-						if (i < j)
-							collided.push_back(std::make_pair(&balls[i], &balls[j]));
+						//std::cout << "BALL IN ZONE: " << (int)(i * _gridSize + j) << ": " << ball.id << std::endl;
+						_zones[(int)(i * _gridSize + j)].push_back(&ball);
 					}
 				}
 			}
+		}
+		for (int i = 0; i < _gridSize * _gridSize; i++)
+		{
+			for (int j = 0; j < _zones[i].size(); j++)
+			{
+				for (int k = j; k < _zones[i].size(); k++)
+				{
+					if (DoBallsOverlap(*_zones[i][j], *_zones[i][k]))
+					{
+						StaticCollision(*_zones[i][j], *_zones[i][k]);
+						if (j < k)
+							collided.push_back(std::make_pair(_zones[i][j], _zones[i][k]));
+					}
+				}
+			}
+			_zones[i].clear();
 		}
 		for (int i = 0; i < balls.size(); i++)
 		{
@@ -72,6 +106,7 @@ void Box::Update(float dt)
 		{
 			DynamicCollision(*pair.first, *pair.second);
 		}
+		collided.clear();
 	}
 }
 

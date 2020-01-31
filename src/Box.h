@@ -21,13 +21,16 @@ private:
 	int _selected;
 	int _hovered;
 	sf::SoundBuffer _hitSound;
+	int _gridSize;
+	std::vector<std::vector<Ball*>> _zones;
+
 protected:
 	float _DotProduct(sf::Vector2f v1, sf::Vector2f v2);
+	bool _isBallInZone(Ball& ball, sf::FloatRect);
 public:
-	Box();
-	Box(std::vector<Ball> ballVec, sf::Vector2f boxSize, float wall_stiffness = 0.9f, float gravity_mult = 1.0f, sf::Color bg_color = {40, 40, 40}, std::string path_to_hitsound = ""); // No wall collision if stiffness = -1.0f
+	Box(std::vector<Ball> ballVec, sf::Vector2f boxSize, float wall_stiffness = 0.9f, float gravity_mult = 1.0f, sf::Color bg_color = {40, 40, 40}, std::string path_to_hitsound = "", int collisionGrid = 4); // No wall collision if stiffness = -1.0f. Collision is going to be divided into 2^collisionGrid threads.
 	std::vector<Ball> balls;
-	sf::Vector2f size;
+	sf::Vector2f size; // Size of the box in pixels
 	float wallStiffness; // If ball bounces off the wall, its speed is multiplied by this.
 	float gravity;
 	sf::Color bgColor;

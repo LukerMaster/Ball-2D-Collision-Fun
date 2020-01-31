@@ -51,7 +51,8 @@ sf::Color StateBox::_getHSVColor(int hue, float sat, float val)
 
 
 StateBox::StateBox(EnvVariables& vars)
-	:State(vars)
+	:State(vars),
+	_box(std::vector<Ball>(), { 600, 600 }, 0.5f, 9.81f * _vars.options.gravityScale, { 40, 40, 40 })
 {
 	_prevClicked = false;
 	cooldown = 0;
@@ -74,6 +75,7 @@ void StateBox::Update(float dt)
 
 	_box.UpdateGravity(_vars.options.gravityScale);
 	_box.UpdateStiffness((float)_vars.options.wallStiffness * 0.01f);
+	//_box.UpdateStiffness(-1.0f);
 
 	if (_vars.inputs.left)  _box.AddWoosh({ (float)-_vars.options.wooshPower * 0.005f, 0 });
 	if (_vars.inputs.right) _box.AddWoosh({ (float)_vars.options.wooshPower * 0.005f,  0 });

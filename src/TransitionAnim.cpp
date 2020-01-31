@@ -7,7 +7,8 @@ float TransitionAnim::_ReverseLerp(float start, float end, float value)
 }
 
 TransitionAnim::TransitionAnim()
-	:_percentage(0.0f)
+	:_percentage(0.0f),
+	_box(std::vector<Ball>(), {600, 600})
 {
 }
 
